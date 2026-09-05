@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6f7fb">
-<title>Scriptura Studio V8 — Interlineal y Lenguas Originales</title>
+<title>Scriptura Studio V9 — Preguntas Inteligentes</title>
 <style>
 :root{
   --bg:#f6f7fb;--panel:#ffffff;--panel2:#f9fafc;--text:#18202b;--muted:#6f7885;
@@ -188,6 +188,27 @@ button{touch-action:manipulation}
 .compare-original-card{border:1px solid var(--line);border-radius:15px;padding:14px;background:#fff}
 .compare-original-card h4{margin:0 0 6px;font-size:11px}.compare-original-card p{font-size:10px;line-height:1.6;color:#5e6978}
 
+
+.question-result-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);gap:14px}
+@media(max-width:900px){.question-result-grid{grid-template-columns:1fr}}
+.answer-summary{background:linear-gradient(135deg,#fff,#f7faff);border:1px solid var(--line);border-radius:18px;padding:18px}
+.answer-summary h3{margin:0 0 8px;font-size:17px}.answer-summary p{font-size:11px;line-height:1.72;color:#566272}
+.reference-list{display:grid;gap:10px}
+.reference-card{display:block;width:100%;text-align:left;border:1px solid var(--line);border-radius:15px;padding:14px;background:#fff;cursor:pointer;transition:.16s}
+.reference-card:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(31,45,66,.08);border-color:#c7d5ed}
+.reference-card.deut{background:#fff8ec;border-color:#ead3ad}
+.reference-card.extra{background:#f7f3ff;border-color:#d8caef}
+.reference-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.reference-ref{font-weight:850;font-size:12px;color:#273447}.reference-meta{font-size:8px;color:#7d8795;margin-top:3px;line-height:1.45}
+.reference-arrow{font-size:16px;color:#91a0b5}
+.reference-text{font-size:10px;line-height:1.6;color:#586575;margin-top:9px}
+.question-analysis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:12px}
+.qa-block{border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px}
+.qa-block b{display:block;font-size:10px;color:#374455}.qa-block p{font-size:9px;color:#6a7584;line-height:1.55;margin:5px 0 0}
+.version-status{font-size:8px;border-radius:999px;padding:4px 7px;background:#f2f5f9;color:#6e7987;border:1px solid var(--line)}
+.version-unavailable{opacity:.78;background:#fafafa}
+.click-hint{font-size:8px;color:#7c8794;margin-top:7px}
+
 </style>
 </head>
 <body>
@@ -195,7 +216,7 @@ button{touch-action:manipulation}
   <aside class="sidebar" id="sidebar">
     <div class="brand">
       <div class="brandmark">✝</div>
-      <div><h1>Scriptura Studio</h1><p>V8 · Interlineal</p></div>
+      <div><h1>Scriptura Studio</h1><p>V9 · Preguntas inteligentes</p></div>
     </div>
     <nav class="nav" id="nav">
       <button class="active" data-view="home"><span class="ico">⌂</span>Inicio</button>
@@ -240,7 +261,7 @@ button{touch-action:manipulation}
           <option value="scriptura">Paráfrasis Scriptura</option>
         </select>
         <button class="icon-btn" onclick="activateView('search')">⌕</button>
-        <div class="profile-pill">Scriptura V8</div>
+        <div class="profile-pill">Scriptura V9</div>
       </div>
     </header>
 
@@ -542,7 +563,7 @@ button{touch-action:manipulation}
         </div>
       </section>
 
-      <div class="footer-note">Scriptura Studio V8 es una herramienta de estudio y reflexión cristiana. Distingue entre canon de 66 libros, deuterocanónicos y otros textos antiguos, y separa atribución tradicional de autoría académicamente segura o debatida. No sustituye una traducción bíblica completa, acompañamiento pastoral ni atención profesional cuando corresponda.</div>
+      <div class="footer-note">Scriptura Studio V9 es una herramienta de estudio y reflexión cristiana. Distingue entre canon de 66 libros, deuterocanónicos y otros textos antiguos, y separa atribución tradicional de autoría académicamente segura o debatida. No sustituye una traducción bíblica completa, acompañamiento pastoral ni atención profesional cuando corresponda.</div>
     </div>
   </main>
 </div>
@@ -981,10 +1002,11 @@ function setVersion(k){
 }
 function versionText(p,version){
   if(version==="scriptura") return p.text;
+  if(VERSION_TEXTS[p.ref]?.[version]) return VERSION_TEXTS[p.ref][version];
   if(version==="nvi" || version==="ntv"){
-    return "Referencia: " + p.ref + " · " + p.text + " [resumen contextual; consulta el texto completo en una edición autorizada de " + VERSION_PROFILES[version].name + "]";
+    return "Referencia "+p.ref+" disponible; el texto completo de "+VERSION_PROFILES[version].name+" no está incrustado localmente.";
   }
-  return VERSION_TEXTS[p.ref]?.[version] || p.text;
+  return "Texto exacto no disponible localmente para esta edición en "+p.ref+".";
 }
 function versionLabel(version){return VERSION_PROFILES[version]?.name||"Paráfrasis Scriptura"}
 
@@ -995,43 +1017,237 @@ function useFAQ(q){
   $("askInput").value=q;activateView("ask");window.scrollTo({top:0,behavior:"smooth"});
 }
 
+
+function detectQuestionIntent(q){
+  const n=norm(q);
+  const has=(...xs)=>xs.some(x=>n.includes(norm(x)));
+  if(has("perdon","perdonar","culpa","traicion","fallé","falle","pecado","arrepent")) return "forgiveness";
+  if(has("confianza","reconcili","relacion","pareja","matrimonio","amor","vínculo","vinculo")) return "relationship";
+  if(has("ansiedad","miedo","temor","preocup","angustia","estres","estrés")) return "anxiety";
+  if(has("decidir","decision","decisión","elegir","camino","qué hago","que hago")) return "decision";
+  if(has("duelo","muerte","dolor","sufrimiento","pérdida","perdida")) return "grief";
+  if(has("esperanza","futuro","desanim","rendirme","seguir")) return "hope";
+  if(has("conflicto","enemigo","discusión","discusion","pelea","ofensa")) return "conflict";
+  if(has("oracion","oración","orar","rezar")) return "prayer";
+  if(has("dinero","riqueza","deuda","trabajo","laboral","empleo")) return "work";
+  if(has("quien escribio","quién escribió","autor","atribuye","escribió")) return "authorship";
+  if(has("significa","qué quiere decir","que quiere decir","explica","interpret")) return "meaning";
+  return "general";
+}
+
+const INTENT_COPY={
+  forgiveness:{
+    title:"Perdón, arrepentimiento y reparación",
+    thesis:"La Biblia distingue entre perdonar, arrepentirse, reparar el daño y reconstruir confianza. El perdón puede comenzar antes de que una relación vuelva a ser segura; la confianza normalmente requiere verdad y conducta consistente.",
+    focus:"Busca textos sobre confesión, misericordia, responsabilidad y cambio observable."
+  },
+  relationship:{
+    title:"Relación, confianza y reconciliación",
+    thesis:"Una relación bíblicamente sana no se sostiene solo en sentimiento. La verdad, el respeto, los límites y la fidelidad práctica pesan más que las promesas aisladas.",
+    focus:"Los pasajes seleccionados se leen como principios para tu conducta, no como predicciones sobre otra persona."
+  },
+  anxiety:{
+    title:"Ansiedad, temor y paz",
+    thesis:"Los textos bíblicos sobre ansiedad no niegan el problema; redirigen la atención hacia oración, confianza, prudencia y acción en el presente.",
+    focus:"Conviene distinguir entre consuelo espiritual y decisiones prácticas concretas."
+  },
+  decision:{
+    title:"Discernimiento y decisiones",
+    thesis:"La Biblia suele orientar decisiones mediante sabiduría, motivos, consejo, responsabilidad y consecuencias, más que mediante señales aleatorias.",
+    focus:"La pregunta central es qué opción permite actuar con mayor verdad, justicia y prudencia."
+  },
+  grief:{
+    title:"Dolor, pérdida y esperanza",
+    thesis:"El dolor no se presenta como falta de fe. Los textos de duelo combinan lamento, compañía, memoria y esperanza.",
+    focus:"No se debe usar un versículo para minimizar una pérdida real."
+  },
+  hope:{
+    title:"Esperanza y perseverancia",
+    thesis:"La esperanza bíblica no equivale a garantizar el resultado que uno desea; orienta a perseverar con fidelidad aun cuando el desenlace no esté controlado.",
+    focus:"Separa expectativa personal de promesa textual."
+  },
+  conflict:{
+    title:"Conflicto, verdad y paz",
+    thesis:"Los textos bíblicos combinan búsqueda de paz con verdad, límites y responsabilidad. La paz no exige tolerar abuso o engaño.",
+    focus:"Prioriza escucha, claridad, reparación y límites proporcionados."
+  },
+  prayer:{
+    title:"Oración",
+    thesis:"La oración bíblica incluye petición, gratitud, confesión, lamento y alineación de la voluntad, no solo solicitud de resultados.",
+    focus:"La respuesta usa pasajes que muestran formas distintas de orar."
+  },
+  work:{
+    title:"Trabajo, dinero y administración",
+    thesis:"La Biblia aborda trabajo y recursos mediante diligencia, justicia, generosidad, prudencia y administración responsable.",
+    focus:"Evita tratar los textos como fórmulas automáticas de prosperidad."
+  },
+  authorship:{
+    title:"Autoría y atribución",
+    thesis:"La atribución tradicional y la autoría históricamente demostrable no siempre coinciden. Scriptura muestra ambas cuando existe debate.",
+    focus:"Abre cada referencia para revisar el libro, su atribución tradicional y la perspectiva académica."
+  },
+  meaning:{
+    title:"Interpretación del texto",
+    thesis:"Para interpretar un pasaje conviene considerar género, contexto literario, palabras clave, lengua original y relación con otros textos.",
+    focus:"La respuesta prioriza contexto antes que aplicación personal."
+  },
+  general:{
+    title:"Respuesta bíblica contextual",
+    thesis:"La selección se basa en los términos concretos de tu pregunta y en los temas de cada pasaje, evitando convertir textos aislados en predicciones.",
+    focus:"Abre cada referencia para estudiar el libro y su contexto."
+  }
+};
+
+function dynamicApplication(intent,q,chosen){
+  const c=INTENT_COPY[intent]||INTENT_COPY.general;
+  const refs=chosen.slice(0,3).map(p=>p.ref).join(", ");
+  return `<div class="question-analysis">
+    <div class="qa-block"><b>Lectura principal</b><p>${esc(c.thesis)}</p></div>
+    <div class="qa-block"><b>Cómo aplicarlo</b><p>${esc(c.focus)}</p></div>
+    <div class="qa-block"><b>Textos centrales</b><p>${esc(refs||"No se encontraron coincidencias suficientes.")}</p></div>
+  </div>`;
+}
+
+function openPassageInBible(p){
+  activateView("bible");
+  // Ensure filters allow the selected book to be visible.
+  if($("bookCanon")) $("bookCanon").value="all";
+  if($("bookTest")) $("bookTest").value="all";
+  if($("bookGenre")) $("bookGenre").value="all";
+  if($("bookAuthor")) $("bookAuthor").value="all";
+  if($("bookLanguage")) $("bookLanguage").value="all";
+  if($("bookFilter")) $("bookFilter").value=p.book;
+  filterBooks();
+
+  const book=BOOKS.find(b=>b.name===p.book);
+  if(book){
+    showBook(book.id);
+    const mt=p.ref.match(/(\d+):(\d+)/);
+    if(mt){
+      const ch=Number(mt[1]);
+      setTimeout(()=>showChapter(book.name,ch),60);
+    }
+  }
+  setTimeout(()=>{
+    const target=$("bookDetail");
+    if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
+  },100);
+}
+
 function answerQuestion(){
-  const q=$("askInput").value.trim();if(!q){alert("Escribe una pregunta.");return}
-  const testament=$("askTestament").value, count=+$("askCount").value, mode=$("askMode").value;
+  const q=$("askInput").value.trim();
+  if(!q){alert("Escribe una pregunta.");return}
+
+  const testament=$("askTestament").value;
+  const count=+$("askCount").value;
+  const mode=$("askMode").value;
+  const intent=detectQuestionIntent(q);
+
   let pool=PASSAGES.filter(p=>{
       const canonOK=state.askCanon==="all" || p.canon===state.askCanon;
       const testOK=testament==="all" || p.test===testament;
       return canonOK && testOK;
     })
     .map(p=>({...p,score:scorePassage(p,q)}))
-    .sort((a,b)=>b.score-a.score);
-  const positive=pool.filter(p=>p.score>0), chosen=(positive.length?positive:pool).slice(0,count);
-  const tags=classify(q), themes=[...new Set(chosen.flatMap(p=>p.themes))];
+    .sort((a,b)=>b.score-a.score || a.id-b.id);
+
+  // Prevent the same fixed block for unrelated questions.
+  // Prefer genuinely positive matches, then diversify by book/theme.
+  let positives=pool.filter(p=>p.score>0);
+  if(!positives.length) positives=pool.slice(0,Math.max(count*2,8));
+
+  const chosen=[];
+  const usedBooks=new Set();
+  for(const p of positives){
+    if(chosen.length>=count) break;
+    if(!usedBooks.has(p.book) || positives.length<=count){
+      chosen.push(p);usedBooks.add(p.book);
+    }
+  }
+  for(const p of positives){
+    if(chosen.length>=count) break;
+    if(!chosen.some(x=>x.id===p.id)) chosen.push(p);
+  }
+
+  const tags=classify(q);
   const version=$("globalVersion").value;
+  const copy=INTENT_COPY[intent]||INTENT_COPY.general;
 
-  let intro="";
-  if(mode==="explain") intro="La pregunta se responde desde los temas y pasajes más relacionados de la base local. Primero se explica el principio bíblico y después se señalan límites de interpretación.";
-  if(mode==="apply") intro="La aplicación se concentra en aquello que depende de tu conducta: responsabilidad, discernimiento, límites, paciencia y coherencia.";
-  if(mode==="compare") intro="La respuesta compara cómo distintos pasajes abordan el mismo tema sin forzarlos a decir exactamente lo mismo.";
-  if(mode==="devotional") intro="La reflexión devocional usa los pasajes para examen personal, oración y práctica cotidiana.";
+  let modeText={
+    explain:"La respuesta prioriza significado, contexto y relación entre los textos.",
+    apply:"La respuesta separa el principio bíblico de la aplicación concreta a tu situación.",
+    compare:"La respuesta compara cómo varios pasajes abordan el mismo asunto.",
+    devotional:"La respuesta propone una lectura reflexiva sin convertirla en predicción."
+  }[mode]||"";
 
-  const principle = application(themes);
-  const sources=chosen.map(p=>`<div class="source-card ${p.canon==="deut"?"deut":p.canon==="extra"?"extra":""}"><b>${esc(p.ref)} · ${p.canon==="deut"?"Deuterocanónico":p.canon==="extra"?"Texto antiguo":"Canon 66"} · ${esc(versionLabel(version))}</b><small>${esc(versionText(p,version))}<br>${esc(p.context)}</small></div>`).join("");
-  const versionCards=Object.entries(VERSION_PROFILES).map(([k,v])=>{
-    const p=chosen[0];
-    return `<div class="version-card accent-${v.accent}"><div class="vname">${esc(v.name)}</div><div class="vmeta">${esc(v.lang)} · ${esc(p.ref)}</div><div class="vtext">${esc(versionText(p,k))}</div></div>`;
+  const refs=chosen.map(p=>{
+    const b=BOOKS.find(x=>x.name===p.book);
+    const author=b?.author||"Desconocido";
+    const canon=p.canon==="deut"?"Deuterocanónico":p.canon==="extra"?"Texto antiguo":"Canon 66";
+    return `<button class="reference-card ${p.canon==="deut"?"deut":p.canon==="extra"?"extra":""}" onclick="openPassageInBible(PASSAGES.find(x=>x.id===${p.id}))">
+      <div class="reference-top">
+        <div>
+          <div class="reference-ref">${esc(p.ref)}</div>
+          <div class="reference-meta">${esc(canon)} · Libro atribuido a ${esc(author)}</div>
+        </div>
+        <div class="reference-arrow">›</div>
+      </div>
+      <div class="reference-text">${esc(p.text)}</div>
+      <div class="click-hint">Abrir en la Biblia → libro, autoría, capítulos y texto original disponible</div>
+    </button>`;
   }).join("");
 
-  $("answerSection").innerHTML=`<div class="answer-card">
-    <div class="answer-head"><div><h3>Respuesta bíblica</h3><div class="chip-row" style="margin-top:7px">${tags.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div></div><span>${esc(versionLabel(version))}</span></div>
-    <div class="answer-main"><p>${esc(intro)}</p>${principle}<p><strong>En síntesis:</strong> los pasajes seleccionados apuntan a una respuesta que prioriza verdad, responsabilidad personal, sabiduría y una conducta coherente con el principio bíblico identificado. La aplicación no permite afirmar qué hará otra persona ni convertir un versículo en predicción.</p></div>
-    <div class="source-stack">${sources}</div>
-  </div>
-  <div class="callout gold">Los pasajes deuterocanónicos/apócrifos aparecen con fondo ámbar; el canon de 66 libros aparece en blanco/azul. Esto evita mezclar tradiciones como si todas las comunidades cristianas usaran el mismo canon.</div>
-  <div class="section">
-    <div class="section-head"><div><h3>Comparación de versiones</h3><p>Primera referencia de la respuesta en los seis perfiles disponibles.</p></div></div>
-    <div class="version-grid">${versionCards}</div>
-  </div>`;
+  const first=chosen[0];
+  let versionComparison="";
+  if(first){
+    const versionOrder=["rvr1909","nvi","ntv","oso1569","kjv1611","scriptura"];
+    const cards=versionOrder.map(v=>{
+      const exact=!!(VERSION_TEXTS[first.ref] && VERSION_TEXTS[first.ref][v]);
+      const isPar=v==="scriptura";
+      const modern=v==="nvi"||v==="ntv";
+      let body="", status="";
+      if(exact){
+        body=VERSION_TEXTS[first.ref][v];
+        status="Texto local disponible";
+      }else if(isPar){
+        body=first.text;
+        status="Paráfrasis Scriptura";
+      }else if(modern){
+        body="Texto íntegro no incluido localmente. Abre la referencia en tu edición autorizada de "+versionLabel(v)+".";
+        status="Referencia disponible";
+      }else{
+        body="Esta edición no tiene el texto exacto cargado para esta referencia en la base local.";
+        status="Sin texto local";
+      }
+      return `<div class="version-card ${!exact&&!isPar?"version-unavailable":""}">
+        <div class="vname">${esc(versionLabel(v))}</div>
+        <div class="vmeta">${esc(first.ref)} <span class="version-status">${esc(status)}</span></div>
+        <div class="vtext">${esc(body)}</div>
+      </div>`;
+    }).join("");
+    versionComparison=`<div class="section">
+      <div class="section-head"><div><h3>Comparación de versiones</h3><p>Referencia seleccionada: ${esc(first.ref)}. Ya no se repite la misma paráfrasis como si fuera el texto de todas las versiones.</p></div></div>
+      <div class="version-grid">${cards}</div>
+    </div>`;
+  }
+
+  $("answerSection").innerHTML=`
+    <div class="question-result-grid">
+      <div class="answer-summary">
+        <div class="eyebrow">${esc(copy.title)}</div>
+        <h3>${esc(q)}</h3>
+        <p>${esc(copy.thesis)}</p>
+        <p><strong>Modo:</strong> ${esc(modeText)}</p>
+        ${dynamicApplication(intent,q,chosen)}
+        <div class="callout" style="margin-top:12px"><strong>Criterio:</strong> la respuesta cambia según las palabras de tu pregunta, la intención detectada y los pasajes con mayor relación temática. No interpreta un versículo aislado como predicción.</div>
+      </div>
+      <div>
+        <div class="section-head"><div><h3>Pasajes relacionados</h3><p>Toca cualquiera para abrirlo en la Biblioteca.</p></div></div>
+        <div class="reference-list">${refs||'<div class="note">No se encontraron pasajes suficientes para esta consulta.</div>'}</div>
+      </div>
+    </div>
+    ${versionComparison}
+  `;
 }
 
 
@@ -1243,23 +1459,33 @@ function renderModes(){
 }
 
 function scorePassage(p,q){
-  const qt=toks(q), hay=toks(p.themes.join(" ")+" "+p.ref+" "+p.book+" "+p.text+" "+p.context);
+  const nq=norm(q), tokens=nq.split(/\s+/).filter(x=>x.length>3);
+  const hay=norm(p.ref+" "+p.book+" "+p.themes.join(" ")+" "+p.text+" "+p.context);
   let s=0;
-  qt.forEach(t=>{if(hay.includes(t))s+=4;else if(hay.some(x=>x.startsWith(t)||t.startsWith(x)))s+=2});
-  const n=norm(q);
-  const aliases=[
-    [["miedo","temor","ansiedad","preocupacion"],["miedo","ansiedad","paz","confianza"]],
-    [["perdon","culpa","falle","fallado","traicion","arrepiento"],["perdón","arrepentimiento","restauración","reconciliación"]],
-    [["decision","decidir","camino","rumbo"],["decisiones","sabiduría","dirección","discernimiento"]],
-    [["amor","pareja","relacion","confianza","reconciliar"],["amor","relaciones","paciencia","perdón","reconciliación"]],
-    [["dolor","triste","sufr","duelo","perdida"],["dolor","consuelo","esperanza"]],
-    [["enojo","pelea","discusion","conflicto"],["conflicto","paz","palabras","autocontrol"]],
-    [["futuro","esperanza"],["esperanza","futuro","confianza","perseverancia"]]
-  ];
-  aliases.forEach(([ks,ts])=>{if(ks.some(k=>n.includes(norm(k)))&&ts.some(t=>p.themes.includes(t)))s+=5});
-  if(state.mode==="relationship"&&p.themes.some(t=>["amor","relaciones","perdón","reconciliación","verdad","paciencia"].includes(t)))s+=4;
-  if(state.mode==="decision"&&p.themes.some(t=>["decisiones","sabiduría","discernimiento","dirección"].includes(t)))s+=4;
-  if(state.mode==="prayer"&&p.themes.includes("oración"))s+=3;
+  tokens.forEach(t=>{ if(hay.includes(t)) s+=3; });
+  p.themes.forEach(t=>{ if(nq.includes(norm(t))) s+=7; });
+
+  const intent=detectQuestionIntent(q);
+  const boosts={
+    forgiveness:["perdón","arrepentimiento","misericordia","culpa","reparación"],
+    relationship:["relaciones","amor","matrimonio","amistad","fidelidad","perdón"],
+    anxiety:["ansiedad","miedo","paz","confianza","oración"],
+    decision:["decisiones","sabiduría","discernimiento","prudencia"],
+    grief:["dolor","duelo","muerte","esperanza","consuelo"],
+    hope:["esperanza","fortaleza","perseverancia","confianza"],
+    conflict:["conflicto","paz","perdón","justicia","relaciones"],
+    prayer:["oración","confianza","gratitud"],
+    work:["trabajo","sabiduría","prudencia","justicia"],
+    authorship:[],
+    meaning:[]
+  }[intent]||[];
+  boosts.forEach(k=>{
+    if(p.themes.some(t=>norm(t).includes(norm(k))) || hay.includes(norm(k))) s+=5;
+  });
+
+  // Strong reference/book match
+  if(nq.includes(norm(p.ref))) s+=50;
+  if(nq.includes(norm(p.book))) s+=20;
   return s;
 }
 
@@ -1303,7 +1529,7 @@ function randomPassage(){
 function renderPassages(){
   const version=$("globalVersion")?.value||"scriptura";
   $("passages").innerHTML=state.selected.length?state.selected.map(p=>`<article class="passage ${p.canon==="deut"?"deut":p.canon==="extra"?"extra":""}">
-    <div><div class="test">${p.canon==="deut"?"Deuterocanónico / Apócrifo según tradición":p.canon==="extra"?"Otro texto antiguo":(p.test==="OT"?"Antiguo Testamento":"Nuevo Testamento")} · ${esc(versionLabel(version))}</div><div class="ref">${esc(p.ref)}</div><div class="txt">${esc(versionText(p,version))}</div><div class="ctx">${esc(p.context)}</div></div>
+    <div><div class="test">${p.canon==="deut"?"Deuterocanónico / Apócrifo según tradición":p.canon==="extra"?"Otro texto antiguo":(p.test==="OT"?"Antiguo Testamento":"Nuevo Testamento")} · ${esc(versionLabel(version))}</div><div class="ref" style="cursor:pointer" onclick="openPassageInBible(PASSAGES.find(x=>x.id===${p.id}))">${esc(p.ref)} ↗</div><div class="reference-meta">Libro atribuido a ${esc((BOOKS.find(b=>b.name===p.book)||{}).author||"Desconocido")}</div><div class="txt">${esc(versionText(p,version))}</div><div class="ctx">${esc(p.context)}</div></div>
     <div><div class="themes">${p.themes.map(esc).join(" · ")}</div><div class="hero-actions"><button class="btn soft" onclick="toggleFav(${p.id})">${state.favs.has(p.id)?"★ Favorito":"☆ Guardar"}</button><button class="btn soft" onclick="noteFromPassage(${p.id})">✎ Nota</button></div></div>
   </article>`).join(""):'<div class="note">Aún no has generado un estudio.</div>';
 }
