@@ -1,0 +1,1533 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f7fb">
+<title>Scriptura Studio V8 — Interlineal y Lenguas Originales</title>
+<style>
+:root{
+  --bg:#f6f7fb;--panel:#ffffff;--panel2:#f9fafc;--text:#18202b;--muted:#6f7885;
+  --line:#e7eaf0;--blue:#2f6fed;--blue2:#5a8cff;--navy:#15213a;--gold:#b98a3c;
+  --green:#2d9b74;--red:#d95a63;--violet:#7357d8;--shadow:0 12px 32px rgba(30,45,70,.08);
+  --shadow2:0 18px 50px rgba(30,45,70,.12);--radius:20px;--sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  --serif:Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(180deg,#f9fafc 0%,#f5f7fb 60%,#f2f4f8 100%);color:var(--text);font-family:var(--sans)}
+button,input,textarea,select{font:inherit}
+button{touch-action:manipulation}
+.app-shell{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;background:#fff;border-right:1px solid var(--line);padding:18px 16px;display:flex;flex-direction:column;z-index:20}
+.brand{display:flex;align-items:center;gap:12px;padding:6px 6px 18px}.brandmark{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#eaf0ff,#fff6df);border:1px solid #dde5f6;color:var(--navy);font-size:22px}.brand h1{font-size:17px;margin:0}.brand p{font-size:10px;color:var(--muted);margin:2px 0 0}
+.nav{display:grid;gap:6px}.nav button{display:flex;align-items:center;gap:10px;width:100%;border:0;background:transparent;color:#3f4856;padding:11px 12px;border-radius:12px;text-align:left;cursor:pointer;font-weight:650;font-size:12px}.nav button:hover{background:#f6f8fc}.nav button.active{background:#edf3ff;color:#2058c7}.nav .ico{width:24px;text-align:center;font-size:15px}
+.side-section{margin-top:18px;padding:0 6px}.side-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#99a1ad;margin-bottom:8px;font-weight:800}.quick-list{display:grid;gap:6px}.quick-list button{border:1px solid var(--line);background:#fff;border-radius:11px;padding:8px 10px;color:#56606e;font-size:10px;text-align:left;cursor:pointer}.quick-list button:hover{border-color:#ccd8ef;background:#f8fbff}
+.sidebar-footer{margin-top:auto;border-top:1px solid var(--line);padding:14px 6px 0;color:var(--muted);font-size:9px;line-height:1.45}
+.main{min-width:0}.topbar{height:72px;background:rgba(255,255,255,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:15}.topbar .title-wrap h2{margin:0;font-size:16px}.topbar .title-wrap p{margin:2px 0 0;color:var(--muted);font-size:10px}.top-actions{display:flex;gap:8px;align-items:center}.icon-btn{width:38px;height:38px;border-radius:11px;border:1px solid var(--line);background:#fff;cursor:pointer;color:#4b5563}.profile-pill{border:1px solid var(--line);background:#fff;padding:7px 10px;border-radius:12px;font-size:10px;color:#4f5968}
+.content{padding:26px;max-width:1500px;margin:0 auto}.view{display:none}.view.active{display:block}
+.hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.6fr);gap:18px;align-items:stretch}
+@media(max-width:1000px){.app-shell{grid-template-columns:1fr}.sidebar{position:fixed;left:-290px;width:270px;transition:.2s;box-shadow:var(--shadow2)}.sidebar.open{left:0}.hero{grid-template-columns:1fr}.mobile-menu{display:inline-grid!important}}
+.mobile-menu{display:none}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.hero-card{padding:28px;background:linear-gradient(135deg,#ffffff 0%,#f9fbff 60%,#fffaf0 100%);position:relative;overflow:hidden}.hero-card:after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,#dfe9ff 0%,transparent 70%);right:-50px;top:-80px;opacity:.65}.eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#6c7a90;font-weight:800}.hero-card h3{font-family:var(--serif);font-size:clamp(30px,4.4vw,58px);line-height:1.02;margin:10px 0 12px;letter-spacing:-.025em;position:relative;z-index:1}.hero-card h3 span{color:var(--blue)}.hero-card p{color:#626c7b;max-width:780px;font-size:13px;line-height:1.65;position:relative;z-index:1}.hero-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px;position:relative;z-index:1}
+.btn{border-radius:12px;padding:11px 15px;border:1px solid transparent;font-weight:750;font-size:11px;cursor:pointer}.btn.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 8px 20px rgba(47,111,237,.2)}.btn.secondary{background:#fff;color:#344052;border-color:var(--line)}.btn.soft{background:#f3f6fb;color:#445066;border-color:#eef1f5}.btn.danger{background:#fff3f4;color:#b7444c;border-color:#ffd9dd}
+.stat-card{display:grid;gap:14px}.stat-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}.stat b{font-size:22px}.stat span{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+.section{margin-top:18px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:10px;margin-bottom:12px}.section-head h3{margin:0;font-size:15px}.section-head p{margin:3px 0 0;color:var(--muted);font-size:10px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:900px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.field label{display:block;font-size:10px;color:#6e7886;font-weight:700;margin-bottom:6px}textarea,input,select{width:100%;border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;padding:12px 13px;outline:none}textarea{min-height:110px;resize:vertical;line-height:1.55}textarea:focus,input:focus,select:focus{border-color:#b9c9ec;box-shadow:0 0 0 3px #edf3ff}
+.mode-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}@media(max-width:1050px){.mode-grid{grid-template-columns:repeat(2,1fr)}}.mode-card{border:1px solid var(--line);border-radius:13px;padding:11px;background:#fff;cursor:pointer}.mode-card.active{border-color:#b9caef;background:#f3f7ff}.mode-card b{display:block;font-size:11px}.mode-card span{display:block;color:var(--muted);font-size:9px;margin-top:4px;line-height:1.35}
+.info-card{background:linear-gradient(180deg,#15213a,#1b2b4b);color:#fff}.info-card p{color:#ccd6e7;font-size:11px;line-height:1.6}.chip-row{display:flex;flex-wrap:wrap;gap:6px}.chip{border:1px solid #dfe5ee;background:#fff;border-radius:999px;padding:6px 9px;font-size:9px;color:#586475}.info-card .chip{border-color:#ffffff24;background:#ffffff0f;color:#dfe7f4}
+.passage-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.passage{border:1px solid var(--line);border-radius:16px;background:#fff;padding:16px;box-shadow:0 8px 22px rgba(31,45,66,.05);display:flex;flex-direction:column;justify-content:space-between;min-height:220px}.passage .test{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:#8a94a3;font-weight:800}.passage .ref{font-family:var(--serif);font-size:20px;margin:10px 0}.passage .txt{font-size:11px;color:#56606e;line-height:1.6}.passage .ctx{font-size:9px;color:#8a93a0;line-height:1.5;margin-top:8px}.passage .themes{font-size:9px;color:#2e6add;margin-top:10px}
+.analysis{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}@media(max-width:900px){.analysis{grid-template-columns:1fr}}.analysis-block{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px}.analysis-block h4{margin:0 0 9px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#7b8491}.analysis-block p{font-size:11px;line-height:1.7;color:#56606e}.analysis-block strong{color:#253044}
+.book-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.book-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px;text-align:left;cursor:pointer}.book-card:hover{border-color:#c7d4ec;box-shadow:0 8px 20px rgba(30,45,70,.06)}.book-card b{display:block;font-size:12px}.book-card span{display:block;color:var(--muted);font-size:9px;margin-top:4px}
+.book-detail{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}@media(max-width:900px){.book-detail{grid-template-columns:1fr}}.detail-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px}.detail-card h3{font-family:var(--serif);font-size:26px;margin:0 0 8px}.detail-card p{font-size:11px;line-height:1.65;color:#5e6876}.chapter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px}.chapter-grid button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 4px;font-size:10px;cursor:pointer}.chapter-grid button:hover{background:#f3f7ff;border-color:#c9d7f0}
+.character-grid,.topic-grid,.plan-grid,.map-grid,.compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.character,.topic-card,.plan-card,.map-card,.compare-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 8px 22px rgba(31,45,66,.04)}.character h4,.topic-card h4,.plan-card h4,.map-card h4,.compare-card h4{margin:0 0 7px;font-size:12px}.character p,.topic-card p,.plan-card p,.map-card p,.compare-card p{margin:0;color:#697381;font-size:10px;line-height:1.55}
+.timeline{display:grid;gap:8px}.timeline-item{display:grid;grid-template-columns:150px 1fr;gap:12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px}.timeline-item b{font-size:10px;color:#245fc9}.timeline-item p{margin:0;font-size:10px;line-height:1.55;color:#616c7a}@media(max-width:620px){.timeline-item{grid-template-columns:1fr}}
+.note-editor{min-height:180px}.note-list{display:grid;gap:8px}.note-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px}.note-item b{font-size:11px}.note-item small{display:block;color:var(--muted);font-size:9px;margin-top:4px}.note-item p{font-size:10px;color:#606a78;line-height:1.55}
+.search-result{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px;margin-bottom:8px}.search-result b{font-size:11px}.search-result small{display:block;color:var(--muted);font-size:9px;margin-top:4px;line-height:1.55}
+.reading-plan{display:grid;gap:8px}.day{display:grid;grid-template-columns:70px 1fr;gap:10px;border-top:1px solid var(--line);padding:9px 0}.day:first-child{border-top:0}.day b{font-size:10px;color:#255fc9}.day span{font-size:10px;color:#5f6875}
+.footer-note{color:#8c95a2;font-size:9px;line-height:1.5;margin-top:18px}
+
+.version-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.version-pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-size:10px;font-weight:750;color:#556171;cursor:pointer;transition:.15s}
+.version-pill.active{background:linear-gradient(135deg,#eef4ff,#fff7e6);border-color:#c9d7ee;color:#1f4fa8;box-shadow:0 5px 14px rgba(47,111,237,.08)}
+.qa-shell{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr);gap:14px}
+@media(max-width:920px){.qa-shell{grid-template-columns:1fr}}
+.ask-card{background:linear-gradient(135deg,#ffffff 0%,#f7faff 68%,#fffaf1 100%);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.ask-card:after{content:"?";position:absolute;right:22px;top:-12px;font-family:var(--serif);font-size:110px;color:#2f6fed0b;font-weight:700}
+.answer-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 10px 28px rgba(31,45,66,.06)}
+.answer-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:12px}.answer-head h3{margin:0;font-size:15px}.answer-head span{font-size:9px;color:#667384;background:#f3f6fb;border:1px solid var(--line);border-radius:999px;padding:5px 8px}
+.answer-main{font-size:12px;line-height:1.75;color:#4f5b69}
+.answer-main strong{color:#263243}
+.source-stack{display:grid;gap:8px;margin-top:14px}.source-card{border:1px solid var(--line);background:#fbfcfe;border-radius:14px;padding:12px}
+.source-card b{display:block;font-size:11px}.source-card small{display:block;color:#75808e;font-size:9px;margin-top:5px;line-height:1.55}
+.version-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.version-card{border:1px solid var(--line);background:#fff;border-radius:16px;padding:16px;box-shadow:0 8px 22px rgba(31,45,66,.05)}
+.version-card .vname{font-size:12px;font-weight:800;color:#243043}.version-card .vmeta{font-size:9px;color:#7a8594;margin-top:3px}.version-card .vtext{font-size:11px;line-height:1.65;color:#56606e;margin-top:10px}
+.accent-blue{border-top:3px solid #4f7ff0}.accent-gold{border-top:3px solid #c39a54}.accent-green{border-top:3px solid #4ba47f}.accent-violet{border-top:3px solid #8066dc}
+.visual-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:760px){.visual-kpis{grid-template-columns:repeat(2,1fr)}}
+.visual-kpi{border:1px solid var(--line);background:#fff;border-radius:16px;padding:14px}.visual-kpi b{display:block;font-size:20px}.visual-kpi span{font-size:9px;color:#7b8492}
+.faq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.faq-card{border:1px solid var(--line);border-radius:15px;background:#fff;padding:14px;cursor:pointer}.faq-card b{display:block;font-size:11px}.faq-card span{display:block;font-size:9px;color:#74808f;margin-top:4px;line-height:1.5}
+
+
+.original-hero{background:linear-gradient(135deg,#fff 0%,#f5f8ff 60%,#fff9ef 100%);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:var(--shadow)}
+.lang-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.lang-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 8px 22px rgba(31,45,66,.05)}
+.lang-card h4{margin:0 0 6px;font-size:13px}.lang-card p{margin:0;color:#697381;font-size:10px;line-height:1.55}
+.original-text{font-size:26px;line-height:1.55;background:#fbfcfe;border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:12px}
+.original-text.rtl{direction:rtl;text-align:right;font-family:"Times New Roman",serif}
+.original-text.greek{font-family:Georgia,"Times New Roman",serif}
+.translit{font-size:11px;color:#667180;line-height:1.6;margin-top:9px}
+.gloss-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
+.gloss{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}
+.gloss b{display:block;font-size:14px}.gloss span{display:block;font-size:9px;color:#7b8492;margin-top:3px;line-height:1.4}
+.variant-card{border:1px solid var(--line);border-radius:14px;background:#fff;padding:13px}
+.variant-card b{display:block;font-size:11px}.variant-card p{font-size:10px;line-height:1.55;color:#657080;margin:6px 0 0}
+.source-badge{display:inline-block;border-radius:999px;border:1px solid var(--line);padding:5px 8px;font-size:9px;color:#5e6978;background:#fff}
+.matrix{width:100%;border-collapse:separate;border-spacing:0;font-size:10px}.matrix th,.matrix td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.matrix th{color:#677383;font-size:9px;text-transform:uppercase;letter-spacing:.08em}.matrix td{color:#4f5b69}
+
+
+:root{
+  --canon:#2f6fed;
+  --deut:#a66a1f;
+  --deut-bg:#fff8ec;
+  --deut-line:#ead3ad;
+  --extra:#7a5bc7;
+  --extra-bg:#f7f3ff;
+  --extra-line:#d8caef;
+}
+.canon-key{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.canon-key .key{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 9px;font-size:9px;color:#5c6675}
+.canon-dot{width:8px;height:8px;border-radius:50%;background:var(--canon)}
+.canon-dot.deut{background:var(--deut)}.canon-dot.extra{background:var(--extra)}
+.passage.deut{background:linear-gradient(180deg,#fffdfa,#fff8ec);border-color:var(--deut-line)}
+.passage.deut .test,.passage.deut .themes{color:var(--deut)}
+.passage.extra{background:linear-gradient(180deg,#fdfcff,#f7f3ff);border-color:var(--extra-line)}
+.passage.extra .test,.passage.extra .themes{color:var(--extra)}
+.book-card.deut{background:var(--deut-bg);border-color:var(--deut-line)}
+.book-card.deut b{color:#7f541f}
+.book-card.extra{background:var(--extra-bg);border-color:var(--extra-line)}
+.book-card.extra b{color:#6547aa}
+.source-card.deut{background:var(--deut-bg);border-color:var(--deut-line)}
+.source-card.deut b{color:#7f541f}
+.source-card.extra{background:var(--extra-bg);border-color:var(--extra-line)}
+.source-card.extra b{color:#6547aa}
+.canon-section{border-left:4px solid var(--canon);padding-left:14px}
+.deut-section{border-left:4px solid var(--deut);padding-left:14px}
+.extra-section{border-left:4px solid var(--extra);padding-left:14px}
+.canon-filter{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:720px){.canon-filter{grid-template-columns:1fr}}
+.canon-option{border:1px solid var(--line);background:#fff;border-radius:13px;padding:11px;text-align:left;cursor:pointer}
+.canon-option.active{box-shadow:0 0 0 2px #dce6fa inset}
+.canon-option.deut.active{box-shadow:0 0 0 2px #ead3ad inset;background:#fffaf2}
+.canon-option.extra.active{box-shadow:0 0 0 2px #dccff2 inset;background:#faf7ff}
+.canon-option b{display:block;font-size:11px}.canon-option span{display:block;font-size:9px;color:#75808d;margin-top:4px;line-height:1.4}
+
+
+:root{
+  --ink:#18202b;--sub:#647083;--softblue:#edf4ff;--softgold:#fff7e8;--softviolet:#f7f2ff;
+}
+.book-card{position:relative;overflow:hidden;min-height:132px;transition:.18s ease}
+.book-card:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(31,45,66,.09)}
+.book-card .book-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.book-card .book-num{font-size:9px;color:#98a1ae;font-weight:800}
+.author-chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:5px 8px;background:#f4f7fb;border:1px solid var(--line);font-size:8px;color:#536071;font-weight:750;margin-top:9px}
+.book-card.deut .author-chip{background:#fff4dd;border-color:#ead3ad;color:#7f541f}
+.book-card.extra .author-chip{background:#f5efff;border-color:#d8caef;color:#6547aa}
+.author-label{font-size:8px;letter-spacing:.08em;text-transform:uppercase;color:#929baa;font-weight:800;margin-top:10px}
+.author-name{font-size:10px;font-weight:800;color:#3d4858;margin-top:2px;line-height:1.35}
+.detail-hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);gap:14px}
+@media(max-width:900px){.detail-hero{grid-template-columns:1fr}}
+.author-panel{background:linear-gradient(135deg,#f9fbff,#fffaf0);border:1px solid var(--line);border-radius:16px;padding:16px}
+.author-panel h4{margin:0 0 6px;font-size:12px}.author-panel p{font-size:10px;line-height:1.6;color:#5f6a79;margin:6px 0}
+.authorship-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:700px){.authorship-grid{grid-template-columns:1fr}}
+.authorship-box{border:1px solid var(--line);background:#fff;border-radius:13px;padding:12px}
+.authorship-box .label{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#8a94a2;font-weight:800}
+.authorship-box b{display:block;margin-top:4px;font-size:11px}
+.authorship-box p{font-size:9px;color:#6d7786;line-height:1.5;margin:5px 0 0}
+.filter-toolbar{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+@media(max-width:1000px){.filter-toolbar{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.filter-toolbar{grid-template-columns:1fr}}
+.metric-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:850px){.metric-strip{grid-template-columns:repeat(2,1fr)}}
+.metric-card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}
+.metric-card b{display:block;font-size:20px}.metric-card span{display:block;color:#7d8794;font-size:9px;margin-top:3px}
+.info-banner{display:flex;gap:12px;align-items:flex-start;background:linear-gradient(135deg,#f8fbff,#fff9ef);border:1px solid var(--line);border-radius:16px;padding:14px}
+.info-banner .icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#fff;border:1px solid var(--line);font-size:18px;flex:0 0 auto}
+.info-banner b{font-size:11px}.info-banner p{font-size:9px;color:#687383;line-height:1.55;margin:4px 0 0}
+.legend-row{display:flex;gap:8px;flex-wrap:wrap}.legend-pill{font-size:8px;border:1px solid var(--line);border-radius:999px;padding:5px 8px;background:#fff;color:#65707e}
+.legend-pill.trad{border-color:#cdd9f3;background:#f6f9ff;color:#315da7}.legend-pill.acad{border-color:#e3d5b5;background:#fff9ec;color:#8a642d}
+
+
+.lang-badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 8px;font-size:8px;font-weight:800;border:1px solid #d7e0ee;background:#f8fbff;color:#40506a}
+.lang-badge.he{border-color:#d9c8a8;background:#fff8eb;color:#7f5c28}
+.lang-badge.gr{border-color:#cdd6f4;background:#f4f7ff;color:#4056a8}
+.lang-badge.ar{border-color:#d8cdeb;background:#faf6ff;color:#6d4da6}
+.lang-badge.mix{border-color:#c9d8cc;background:#f4fbf5;color:#4f7759}
+.interlinear-shell{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:900px){.interlinear-shell{grid-template-columns:1fr}}
+.interlinear-pane{border:1px solid var(--line);border-radius:16px;background:#fff;padding:16px;min-height:180px}
+.interlinear-pane.original{background:linear-gradient(180deg,#fffdf8,#fffaf0)}
+.interlinear-pane.translation{background:linear-gradient(180deg,#fbfdff,#f6f9ff)}
+.interlinear-pane h4{margin:0 0 8px;font-size:11px;color:#445064}
+.interlinear-large{font-size:26px;line-height:1.75}
+.interlinear-large.rtl{direction:rtl;text-align:right;font-family:"Times New Roman",serif}
+.interlinear-large.greek{font-family:Georgia,"Times New Roman",serif}
+.literal-line{font-size:13px;line-height:1.8;color:#384657}
+.word-table{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin-top:12px}
+.word-cell{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}
+.word-cell .o{font-size:16px;font-weight:800}.word-cell .t{font-size:9px;color:#7b8593;margin-top:3px}.word-cell .g{font-size:10px;color:#4f5c6c;margin-top:4px;line-height:1.4}
+.book-language{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.origin-panel{border:1px solid var(--line);border-radius:16px;background:linear-gradient(135deg,#fffdf8,#f8fbff);padding:16px;margin-top:12px}
+.origin-panel h4{margin:0 0 7px;font-size:12px}.origin-panel p{font-size:10px;color:#657080;line-height:1.6;margin:5px 0}
+.origin-selector{display:grid;grid-template-columns:1.1fr .9fr .9fr;gap:8px}
+@media(max-width:780px){.origin-selector{grid-template-columns:1fr}}
+.compare-original-card{border:1px solid var(--line);border-radius:15px;padding:14px;background:#fff}
+.compare-original-card h4{margin:0 0 6px;font-size:11px}.compare-original-card p{font-size:10px;line-height:1.6;color:#5e6978}
+
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brandmark">✝</div>
+      <div><h1>Scriptura Studio</h1><p>V8 · Interlineal</p></div>
+    </div>
+    <nav class="nav" id="nav">
+      <button class="active" data-view="home"><span class="ico">⌂</span>Inicio</button>
+      <button data-view="ask"><span class="ico">?</span>Preguntar</button>
+      <button data-view="study"><span class="ico">✦</span>Estudio guiado</button>
+      <button data-view="bible"><span class="ico">☰</span>Biblioteca bíblica</button>
+      <button data-view="originals"><span class="ico">אΩ</span>Idiomas originales</button>
+      <button data-view="characters"><span class="ico">♙</span>Personajes</button>
+      <button data-view="topics"><span class="ico">◎</span>Temas</button>
+      <button data-view="timeline"><span class="ico">↗</span>Cronología</button>
+      <button data-view="maps"><span class="ico">⌖</span>Mapas conceptuales</button>
+      <button data-view="compare"><span class="ico">⇄</span>Comparar</button>
+      <button data-view="plans"><span class="ico">✓</span>Planes</button>
+      <button data-view="notes"><span class="ico">✎</span>Notas</button>
+      <button data-view="search"><span class="ico">⌕</span>Buscar</button>
+    </nav>
+    <div class="side-section">
+      <div class="side-label">Accesos rápidos</div>
+      <div class="quick-list">
+        <button onclick="quickTopic('perdón')">Perdón y reparación</button>
+        <button onclick="quickTopic('ansiedad')">Ansiedad y paz</button>
+        <button onclick="quickTopic('relaciones')">Relaciones</button>
+        <button onclick="quickTopic('decisiones')">Decisiones</button>
+      </div>
+    </div>
+    <div class="sidebar-footer">Diseñada para estudio, reflexión y aplicación. No usa la Biblia como sistema de adivinación.</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="icon-btn mobile-menu" id="menuBtn">☰</button>
+        <div class="title-wrap"><h2 id="pageTitle">Inicio</h2><p id="pageSub">Tu espacio de estudio bíblico</p></div>
+      </div>
+      <div class="top-actions">
+        <select id="globalVersion" style="width:auto;min-width:165px;padding:9px 11px;font-size:10px">
+          <option value="rvr1909">RVR 1909</option>
+          <option value="nvi">NVI</option>
+          <option value="ntv">NTV</option>
+          <option value="oso1569">Biblia del Oso 1569</option>
+          <option value="kjv1611">KJV 1611</option>
+          <option value="scriptura">Paráfrasis Scriptura</option>
+        </select>
+        <button class="icon-btn" onclick="activateView('search')">⌕</button>
+        <div class="profile-pill">Scriptura V8</div>
+      </div>
+    </header>
+
+    <div class="content">
+      <section class="view active" id="home">
+        <div class="hero">
+          <div class="card hero-card">
+            <div class="eyebrow">Scriptura Studio V4</div>
+            <h3>Una Biblia de estudio <span>más visual y moderna.</span></h3>
+            <p>Pregunta directamente, navega el canon y los deuterocanónicos, mira autoría y lengua original de cada libro, y estudia pasajes en formato interlineal: texto original a la izquierda y traducción literal al español a la derecha.</p>
+            <div class="hero-actions">
+              <button class="btn primary" onclick="activateView('study')">Iniciar estudio</button>
+              <button class="btn secondary" onclick="activateView('bible')">Explorar Biblia</button>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="eyebrow">Resumen</div>
+            <div class="stat-row">
+              <div class="stat"><b>66</b><span>Libros</span></div>
+              <div class="stat"><b>1189</b><span>Capítulos aprox.</span></div>
+              <div class="stat"><b id="favCount">0</b><span>Favoritos</span></div>
+              <div class="stat"><b id="noteCount">0</b><span>Notas</span></div>
+            </div>
+            <div class="callout gold" style="margin:0">El contenido bíblico mostrado como texto es una paráfrasis breve. La aplicación te indica la referencia para que puedas contrastar el pasaje completo en tu Biblia preferida.</div>
+          </div>
+        </div>
+
+        
+        
+        <div class="section card">
+          <div class="section-head"><div><h3>Canon y colecciones</h3><p>Scriptura distingue visualmente las tradiciones textuales para no mezclarlas.</p></div></div>
+          <div class="canon-key">
+            <span class="key"><span class="canon-dot"></span>Canon de 66 libros</span>
+            <span class="key"><span class="canon-dot deut"></span>Deuterocanónicos / Apócrifos según tradición</span>
+            <span class="key"><span class="canon-dot extra"></span>Otros textos antiguos cristianos/judíos</span>
+          </div>
+          <div class="callout gold">La etiqueta “apócrifo” depende de la tradición. Algunos libros son canónicos para católicos u ortodoxos y no forman parte del canon protestante de 66 libros. Por eso la aplicación los mantiene identificados y separados.</div>
+        </div>
+
+<div class="section">
+          <div class="section-head"><div><h3>Versiones y formas de lectura</h3><p>Elige una edición o compara varias en paralelo.</p></div><button class="btn soft" onclick="activateView('compare')">Comparar</button></div>
+          <div class="version-grid">
+            <div class="version-card accent-blue"><div class="vname">Reina-Valera 1909</div><div class="vmeta">Español · histórica</div><div class="vtext">Perfil principal para lectura en español clásico.</div></div>
+            <div class="version-card accent-violet"><div class="vname">Nueva Versión Internacional (NVI)</div><div class="vmeta">Español · contemporánea</div><div class="vtext">Perfil moderno para lectura clara y comparación de referencias.</div></div>
+            <div class="version-card accent-green"><div class="vname">Nueva Traducción Viviente (NTV)</div><div class="vmeta">Español · contemporánea</div><div class="vtext">Perfil de lenguaje fluido para lectura y comprensión práctica.</div></div>
+            <div class="version-card accent-gold"><div class="vname">Biblia del Oso 1569</div><div class="vmeta">Español · histórica</div><div class="vtext">Perfil histórico para contraste lingüístico y tradición reformada temprana.</div></div>
+            <div class="version-card accent-green"><div class="vname">King James Version 1611</div><div class="vmeta">English · historical</div><div class="vtext">Perfil inglés histórico para comparación interlingüística.</div></div>
+            <div class="version-card accent-violet"><div class="vname">Paráfrasis Scriptura</div><div class="vmeta">Español · lectura clara</div><div class="vtext">Resumen explicativo propio para comprensión rápida y aplicación.</div></div>
+          </div>
+        </div>
+
+<div class="section">
+          <div class="section-head"><div><h3>Comienza por un tema</h3><p>Accesos visuales a consultas frecuentes.</p></div></div>
+          <div class="topic-grid" id="homeTopics"></div>
+        </div>
+
+        
+        
+        <div class="section">
+          <div class="section-head"><div><h3>Original + traducción textual</h3><p>La nueva lectura interlineal muestra qué dice el idioma de origen antes de una traducción editorial.</p></div><button class="btn soft" onclick="activateView('originals')">Abrir interlineal</button></div>
+          <div class="grid3">
+            <div class="topic-card"><h4>א Hebreo bíblico</h4><p>Texto de derecha a izquierda, transliteración y glosa palabra por palabra.</p></div>
+            <div class="topic-card"><h4>ܐ Arameo bíblico</h4><p>Identificación de los libros y secciones donde el arameo forma parte del texto bíblico.</p></div>
+            <div class="topic-card"><h4>Ω Griego koiné</h4><p>Texto del Nuevo Testamento con transliteración, traducción ultraliteral y rango semántico.</p></div>
+          </div>
+        </div>
+
+<div class="section">
+          <div class="section-head"><div><h3>Autoría visible en toda la biblioteca</h3><p>Ya no tienes que abrir cada libro para saber a quién se atribuye.</p></div><button class="btn soft" onclick="activateView('bible')">Explorar autores</button></div>
+          <div class="grid3">
+            <div class="topic-card"><h4>Pentateuco</h4><p><strong>Tradición:</strong> Moisés.<br><strong>Estudio moderno:</strong> composición y edición de múltiples tradiciones.</p></div>
+            <div class="topic-card"><h4>Evangelios</h4><p><strong>Tradición:</strong> Mateo, Marcos, Lucas y Juan.<br><strong>Estudio moderno:</strong> textos formalmente anónimos con atribuciones tempranas.</p></div>
+            <div class="topic-card"><h4>Hebreos</h4><p><strong>Autor:</strong> desconocido.<br>La aplicación lo muestra así, en lugar de asignarlo automáticamente a Pablo.</p></div>
+          </div>
+        </div>
+
+<div class="section">
+          <div class="section-head"><div><h3>Planes destacados</h3><p>Rutas cortas de lectura y reflexión.</p></div></div>
+          <div class="plan-grid" id="homePlans"></div>
+        </div>
+      </section>
+
+
+      <section class="view" id="ask">
+        <div class="qa-shell">
+          <div class="ask-card">
+            <div class="eyebrow">Pregunta bíblica</div>
+            <h3 style="font-family:var(--serif);font-size:32px;margin:8px 0 10px">Pregunta con libertad.</h3>
+            <p style="font-size:11px;line-height:1.65;color:#617082;max-width:720px">Puedes preguntar por doctrina, personajes, decisiones, relaciones, ansiedad, perdón, un pasaje específico o el sentido de una enseñanza. El motor responde con referencias y distingue explicación bíblica de aplicación personal.</p>
+            <textarea id="askInput" placeholder="Ej.: ¿Qué enseña la Biblia sobre recuperar la confianza después de una traición?" style="margin-top:14px"></textarea>
+            <div class="canon-filter" style="margin-top:14px" id="askCanonFilter">
+              <button class="canon-option active" data-canon="all"><b>Todos</b><span>Canon + deuterocanónicos</span></button>
+              <button class="canon-option" data-canon="canon"><b>Canon 66</b><span>Solo libros del canon protestante</span></button>
+              <button class="canon-option deut" data-canon="deut"><b>Deuterocanónicos</b><span>Colección separada</span></button>
+            </div>
+            <div class="grid3">
+              <select id="askMode">
+                <option value="explain">Explicar bíblicamente</option>
+                <option value="apply">Aplicar a mi situación</option>
+                <option value="compare">Comparar pasajes</option>
+                <option value="devotional">Reflexión devocional</option>
+              </select>
+              <select id="askTestament">
+                <option value="all">Toda la Biblia</option>
+                <option value="OT">Antiguo Testamento</option>
+                <option value="NT">Nuevo Testamento</option>
+              </select>
+              <select id="askCount"><option>3</option><option selected>5</option><option>7</option></select>
+            </div>
+            <div class="hero-actions"><button class="btn primary" id="askBtn">Responder</button><button class="btn secondary" id="askClearBtn">Limpiar</button></div>
+          </div>
+
+          <div class="card">
+            <div class="eyebrow">Versiones disponibles</div>
+            <div class="version-strip" id="versionPills"></div>
+            <div class="callout" style="margin-top:14px">La interfaz permite elegir la edición de lectura. Esta base local contiene referencias y paráfrasis; cuando no existe un texto exacto cargado para una edición histórica, se muestra la referencia con resumen contextual en lugar de inventar una cita.</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><div><h3>Preguntas sugeridas</h3><p>Accesos rápidos para probar el motor.</p></div></div>
+          <div class="faq-grid" id="faqGrid"></div>
+        </div>
+
+        <div class="section" id="answerSection"></div>
+      </section>
+
+      <section class="view" id="study">
+        <div class="grid2">
+          <div class="card">
+            <div class="section-head"><div><h3>Estudio guiado</h3><p>Escribe una situación, pregunta o tema.</p></div></div>
+            <div class="field"><label>Consulta</label><textarea id="question" placeholder="Ej.: Quiero comprender qué enseña la Biblia sobre reconstruir la confianza después de haber fallado."></textarea></div>
+            <div class="section-head" style="margin-top:16px"><div><h3>Modo</h3></div></div>
+            <div class="mode-grid" id="modes"></div>
+            <div class="field" style="margin-top:14px"><label>Colección</label>
+              <select id="studyCanon"><option value="all">Canon + Deuterocanónicos</option><option value="canon">Canon de 66 libros</option><option value="deut">Solo deuterocanónicos</option></select>
+            </div>
+            <div class="grid3">
+              <div class="field"><label>Testamento</label><select id="testament"><option value="all">Toda la Biblia</option><option value="OT">Antiguo Testamento</option><option value="NT">Nuevo Testamento</option><option value="DC">Deuterocanónicos</option><option value="EX">Otros textos antiguos</option></select></div>
+              <div class="field"><label>Número de pasajes</label><select id="count"><option>1</option><option>3</option><option selected>5</option></select></div>
+              <div class="field"><label>Sesión</label><input id="session" placeholder="Ej.: relación / fe"></div>
+            </div>
+            <div class="hero-actions"><button class="btn primary" id="runBtn">Generar estudio</button><button class="btn secondary" id="randomBtn">Pasaje aleatorio</button></div>
+          </div>
+          <div class="card info-card">
+            <div class="eyebrow" style="color:#b9c7df">Motor de estudio</div>
+            <h3 style="margin:8px 0 10px;font-size:22px">No responde con “sí/no”.</h3>
+            <p>Primero clasifica la consulta. Luego selecciona pasajes relevantes y separa contexto, principio bíblico, aplicación, responsabilidad personal y límites de interpretación.</p>
+            <div class="chip-row"><span class="chip">Texto</span><span class="chip">Contexto</span><span class="chip">Aplicación</span><span class="chip">Discernimiento</span><span class="chip">Oración</span></div>
+          </div>
+        </div>
+        <div class="section card">
+          <div class="section-head"><div><h3>Pasajes seleccionados</h3><p>Relevancia temática, no adivinación.</p></div></div>
+          <div id="passages" class="passage-grid"></div>
+          <div id="analysis" style="margin-top:14px"></div>
+        </div>
+      </section>
+
+      <section class="view" id="bible">
+        <div class="card">
+          <div class="section-head"><div><h3>Biblioteca bíblica</h3><p>Libros, capítulos, tradición canónica y atribución de autoría.</p></div></div>
+          <div class="metric-strip">
+            <div class="metric-card"><b id="metricBooks">0</b><span>Libros visibles</span></div>
+            <div class="metric-card"><b id="metricCanon">66</b><span>Canon de 66 libros</span></div>
+            <div class="metric-card"><b id="metricDeut">9</b><span>Deuterocanónicos</span></div>
+            <div class="metric-card"><b id="metricExtra">6</b><span>Otros textos antiguos</span></div>
+            <div class="metric-card"><b id="metricAuthors">0</b><span>Atribuciones distintas</span></div>
+          </div>
+          <div class="info-banner" style="margin-bottom:12px"><div class="icon">✎</div><div><b>La atribución no siempre equivale a autoría demostrada.</b><p>Por eso Scriptura muestra siempre dos niveles: <strong>atribución tradicional</strong> y <strong>perspectiva académica resumida</strong>. En libros anónimos o debatidos se indica expresamente.</p><div class="legend-row" style="margin-top:7px"><span class="legend-pill trad">Tradición</span><span class="legend-pill acad">Perspectiva académica</span></div></div></div>
+          <div class="filter-toolbar">
+            <select id="bookCanon"><option value="all">Todas las colecciones</option><option value="canon">Canon 66</option><option value="deut">Deuterocanónicos</option><option value="extra">Otros textos antiguos</option></select>
+            <select id="bookTest"><option value="all">Todos los testamentos</option><option value="OT">Antiguo Testamento</option><option value="NT">Nuevo Testamento</option><option value="DC">Deuterocanónicos</option><option value="EX">Otros textos antiguos</option></select>
+            <select id="bookGenre"><option value="all">Todos los géneros</option></select>
+            <select id="bookAuthor"><option value="all">Todos los autores atribuidos</option></select>
+            <select id="bookLanguage"><option value="all">Todas las lenguas</option><option value="he">Hebreo</option><option value="gr">Griego</option><option value="mix">Mixto / tradición compleja</option></select>
+            <input id="bookFilter" placeholder="Buscar libro, tema, autor o lengua">
+          </div>
+          <div class="book-grid" id="bookGrid" style="margin-top:14px"></div>
+          <div id="bookDetail"></div>
+        </div>
+      </section>
+
+
+      <section class="view" id="originals">
+        <div class="original-hero">
+          <div class="eyebrow">Laboratorio de texto bíblico</div>
+          <h3 style="font-family:var(--serif);font-size:34px;margin:8px 0 10px">Acércate al texto en <span style="color:var(--blue)">hebreo, arameo y griego.</span></h3>
+          <p style="font-size:11px;line-height:1.65;color:#617082;max-width:900px">No conservamos los autógrafos —los ejemplares físicos escritos por los autores— ni una sola “Biblia original” completa. El Antiguo Testamento se transmitió principalmente en hebreo, con secciones en arameo; el Nuevo Testamento fue escrito en griego koiné. Este módulo separa <strong>texto base, transliteración, glosa literal, rango semántico, traducción interpretativa y variantes textuales</strong>.</p>
+          <div class="lang-grid" style="margin-top:14px">
+            <div class="lang-card"><h4>Hebreo bíblico</h4><p>Lengua principal del Tanaj/Antiguo Testamento. Se lee de derecha a izquierda.</p></div>
+            <div class="lang-card"><h4>Arameo bíblico</h4><p>Presente en partes de Daniel, Esdras y algunos pasajes breves.</p></div>
+            <div class="lang-card"><h4>Griego koiné</h4><p>Lengua del Nuevo Testamento y base de gran parte del análisis léxico cristiano.</p></div>
+          </div>
+        </div>
+
+        <div class="section card">
+          <div class="info-banner" style="margin-bottom:14px"><div class="icon">אΩ</div><div><b>Vista interlineal realista</b><p>El texto original disponible se coloca a la izquierda. A la derecha aparece una traducción textual deliberadamente literal, antes de pasar a NVI, NTV, RVR u otra traducción de lectura. Así puedes distinguir lo que dice la estructura original de las decisiones que toma cada traducción.</p></div></div>
+          <div class="section-head"><div><h3>Analizador de pasaje</h3><p>Selecciona una referencia disponible en la base filológica local.</p></div></div>
+          <div class="grid3">
+            <select id="origRef"></select>
+            <select id="origLayer">
+              <option value="all">Vista completa</option>
+              <option value="literal">Glosa literal</option>
+              <option value="semantic">Rango semántico</option>
+              <option value="variants">Variantes textuales</option>
+            </select>
+            <button class="btn primary" id="origAnalyzeBtn">Analizar</button>
+          </div>
+          <div id="originalAnalysis" style="margin-top:14px"></div>
+        </div>
+
+        <div class="section card">
+          <div class="section-head"><div><h3>Tradición textual y fuentes</h3><p>Qué significa “más cercano al original”.</p></div></div>
+          <div class="grid3">
+            <div class="variant-card"><b>Texto Masorético</b><p>Tradición hebrea medieval cuidadosamente preservada; es la base principal de muchas ediciones modernas del Antiguo Testamento.</p></div>
+            <div class="variant-card"><b>Rollos del Mar Muerto</b><p>Manuscritos anteriores al texto masorético medieval. Permiten comparar formas antiguas del texto hebreo.</p></div>
+            <div class="variant-card"><b>Septuaginta (LXX)</b><p>Antigua traducción griega del texto hebreo; a veces conserva una forma textual diferente.</p></div>
+            <div class="variant-card"><b>Manuscritos griegos del NT</b><p>Papiros, códices unciales y minúsculos se comparan mediante crítica textual para reconstruir la lectura más probable.</p></div>
+            <div class="variant-card"><b>Texto crítico</b><p>No es “otra Biblia”, sino una edición académica que evalúa variantes entre manuscritos.</p></div>
+            <div class="variant-card"><b>Traducción</b><p>Toda traducción implica decisiones. Por eso Scriptura separa palabra original, glosa literal y traducción interpretativa.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="characters">
+        <div class="card">
+          <div class="section-head"><div><h3>Personajes bíblicos</h3><p>Perfil, función narrativa y relaciones principales.</p></div></div>
+          <div class="character-grid" id="characterGrid"></div>
+        </div>
+      </section>
+
+      <section class="view" id="topics">
+        <div class="card">
+          <div class="section-head"><div><h3>Temas bíblicos</h3><p>Abre un tema y genera un estudio contextual.</p></div></div>
+          <div class="topic-grid" id="topicGrid"></div>
+        </div>
+      </section>
+
+      <section class="view" id="timeline">
+        <div class="card">
+          <div class="section-head"><div><h3>Cronología bíblica</h3><p>Orden pedagógico aproximado de la historia bíblica.</p></div></div>
+          <div class="timeline" id="timelineList"></div>
+        </div>
+      </section>
+
+      <section class="view" id="maps">
+        <div class="card">
+          <div class="section-head"><div><h3>Mapas conceptuales</h3><p>Relaciones entre ideas, personajes y etapas.</p></div></div>
+          <div class="map-grid" id="mapGrid"></div>
+        </div>
+      </section>
+
+      <section class="view" id="compare">
+        <div class="card">
+          <div class="section-head"><div><h3>Comparador de enfoques</h3><p>Compara cómo dos pasajes abordan un mismo tema.</p></div></div>
+          <div class="grid4">
+            <select id="compareA"></select>
+            <select id="compareB"></select>
+            <select id="compareVersionA">
+              <option value="rvr1909">RVR 1909</option><option value="nvi">NVI</option><option value="ntv">NTV</option><option value="oso1569">Biblia del Oso 1569</option><option value="kjv1611">KJV 1611</option><option value="scriptura">Paráfrasis Scriptura</option>
+            </select>
+            <select id="compareVersionB">
+              <option value="scriptura">Paráfrasis Scriptura</option><option value="nvi">NVI</option><option value="ntv">NTV</option><option value="rvr1909">RVR 1909</option><option value="oso1569">Biblia del Oso 1569</option><option value="kjv1611">KJV 1611</option>
+            </select>
+          </div>
+          <div class="hero-actions"><button class="btn primary" id="compareBtn">Comparar</button></div>
+          <div id="compareResult" class="compare-grid" style="margin-top:14px"></div>
+        </div>
+      </section>
+
+      <section class="view" id="plans">
+        <div class="card">
+          <div class="section-head"><div><h3>Planes de lectura</h3><p>Rutas breves para estudiar una necesidad concreta.</p></div></div>
+          <div class="plan-grid" id="planGrid"></div>
+          <div id="planDetail" style="margin-top:14px"></div>
+        </div>
+      </section>
+
+      <section class="view" id="notes">
+        <div class="grid2">
+          <div class="card">
+            <div class="section-head"><div><h3>Nueva nota</h3><p>Guarda reflexiones personales en este navegador.</p></div></div>
+            <div class="field"><label>Título</label><input id="noteTitle" placeholder="Ej.: Aprendizaje sobre el perdón"></div>
+            <div class="field" style="margin-top:10px"><label>Contenido</label><textarea class="note-editor" id="noteBody" placeholder="Escribe tu reflexión..."></textarea></div>
+            <div class="hero-actions"><button class="btn primary" id="saveNoteBtn">Guardar nota</button></div>
+          </div>
+          <div class="card">
+            <div class="section-head"><div><h3>Mis notas</h3><p>Almacenadas localmente.</p></div><button class="btn danger" id="clearNotesBtn">Borrar todas</button></div>
+            <div class="note-list" id="noteList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="search">
+        <div class="card">
+          <div class="section-head"><div><h3>Buscador global</h3><p>Busca libros, personajes, referencias y temas.</p></div></div>
+          <div class="grid2"><input id="searchInput" placeholder="Ej.: Romanos 8, Pedro, perdón, miedo"><button class="btn primary" id="searchBtn">Buscar</button></div>
+          <div id="searchResults" style="margin-top:14px"></div>
+        </div>
+      </section>
+
+      <div class="footer-note">Scriptura Studio V8 es una herramienta de estudio y reflexión cristiana. Distingue entre canon de 66 libros, deuterocanónicos y otros textos antiguos, y separa atribución tradicional de autoría académicamente segura o debatida. No sustituye una traducción bíblica completa, acompañamiento pastoral ni atención profesional cuando corresponda.</div>
+    </div>
+  </main>
+</div>
+
+<script>
+const BOOKS = [
+["Génesis","OT","Pentateuco",50,"Orígenes, creación, patriarcas, promesa","Presenta los comienzos del mundo bíblico y las historias de Abraham, Isaac, Jacob y José."],
+["Éxodo","OT","Pentateuco",40,"Liberación, pacto, ley, presencia","Relata la salida de Egipto, el pacto en Sinaí y la formación de Israel."],
+["Levítico","OT","Pentateuco",27,"Santidad, culto, sacerdocio","Normas de culto, pureza y santidad."],
+["Números","OT","Pentateuco",36,"Desierto, disciplina, fidelidad","Peregrinaje de Israel y crisis de confianza."],
+["Deuteronomio","OT","Pentateuco",34,"Pacto, memoria, obediencia","Renovación del pacto antes de entrar en la tierra prometida."],
+["Josué","OT","Históricos",24,"Tierra, liderazgo, cumplimiento","Entrada en Canaán y liderazgo de Josué."],
+["Jueces","OT","Históricos",21,"Ciclos, desobediencia, rescate","Ciclos de infidelidad, opresión y liberación."],
+["Rut","OT","Históricos",4,"Lealtad, providencia, redención","Historia breve de fidelidad familiar y restauración."],
+["1 Samuel","OT","Históricos",31,"Samuel, Saúl, David, liderazgo","Transición de jueces a monarquía."],
+["2 Samuel","OT","Históricos",24,"David, reino, pecado, consecuencias","Reinado de David con logros, fallas y consecuencias."],
+["1 Reyes","OT","Históricos",22,"Salomón, templo, división","Desde Salomón hasta la división del reino."],
+["2 Reyes","OT","Históricos",25,"Profetas, caída, exilio","Declive de Israel y Judá hasta el exilio."],
+["1 Crónicas","OT","Históricos",29,"Genealogía, David, culto","Relectura de la historia con énfasis en David."],
+["2 Crónicas","OT","Históricos",36,"Judá, templo, reforma","Historia de Judá con énfasis en fidelidad y culto."],
+["Esdras","OT","Históricos",10,"Retorno, templo, ley","Regreso del exilio y restauración religiosa."],
+["Nehemías","OT","Históricos",13,"Reconstrucción, liderazgo, reforma","Reconstrucción de Jerusalén y reorganización."],
+["Ester","OT","Históricos",10,"Providencia, identidad, valentía","Preservación del pueblo judío en Persia."],
+["Job","OT","Sabiduría",42,"Sufrimiento, justicia, misterio","Explora el sufrimiento del justo y los límites de explicaciones simples."],
+["Salmos","OT","Poesía",150,"Oración, alabanza, lamento, confianza","Colección de oraciones y cantos."],
+["Proverbios","OT","Sabiduría",31,"Sabiduría, carácter, decisiones","Sabiduría práctica sobre conducta, palabras y relaciones."],
+["Eclesiastés","OT","Sabiduría",12,"Sentido, tiempo, límites","Reflexión sobre el sentido de la vida y los límites humanos."],
+["Cantares","OT","Poesía",8,"Amor, deseo, belleza","Poesía de amor y deseo humano."],
+["Isaías","OT","Profetas mayores",66,"Juicio, esperanza, santidad, mesías","Profecía de juicio y restauración."],
+["Jeremías","OT","Profetas mayores",52,"Arrepentimiento, juicio, nuevo pacto","Llamado a volver a Dios antes de la caída de Judá."],
+["Lamentaciones","OT","Poesía",5,"Dolor, duelo, esperanza","Lamentos por la destrucción de Jerusalén."],
+["Ezequiel","OT","Profetas mayores",48,"Gloria, juicio, restauración","Visiones de juicio y renovación durante el exilio."],
+["Daniel","OT","Profetas mayores",12,"Fidelidad, imperios, esperanza","Relatos de fidelidad y visiones apocalípticas."],
+["Oseas","OT","Profetas menores",14,"Fidelidad, infidelidad, amor","La relación matrimonial como imagen del pacto."],
+["Joel","OT","Profetas menores",3,"Día del Señor, Espíritu, restauración","Arrepentimiento y restauración."],
+["Amós","OT","Profetas menores",9,"Justicia, corrupción, juicio","Denuncia injusticia social y religiosidad vacía."],
+["Abdías","OT","Profetas menores",1,"Orgullo, juicio","Oráculo contra Edom."],
+["Jonás","OT","Profetas menores",4,"Misericordia, misión, resistencia","Misericordia de Dios más allá de fronteras."],
+["Miqueas","OT","Profetas menores",7,"Justicia, humildad, esperanza","Juicio contra corrupción y esperanza."],
+["Nahúm","OT","Profetas menores",3,"Juicio, Nínive","Anuncia la caída de Nínive."],
+["Habacuc","OT","Profetas menores",3,"Fe, violencia, preguntas","Diálogo sobre injusticia, espera y confianza."],
+["Sofonías","OT","Profetas menores",3,"Juicio, remanente, restauración","Advertencia y promesa de restauración."],
+["Hageo","OT","Profetas menores",2,"Templo, prioridades","Exhorta a reconstruir el templo."],
+["Zacarías","OT","Profetas menores",14,"Visiones, restauración, esperanza","Visiones de restauración y futuro."],
+["Malaquías","OT","Profetas menores",4,"Culto, fidelidad, pacto","Confronta apatía religiosa y ética."],
+["Mateo","NT","Evangelios",28,"Jesús, reino, discipulado","Presenta a Jesús como Mesías y maestro del Reino."],
+["Marcos","NT","Evangelios",16,"Jesús, servicio, cruz","Relato dinámico centrado en las acciones de Jesús."],
+["Lucas","NT","Evangelios",24,"Jesús, compasión, Espíritu","Destaca misericordia, inclusión y acción del Espíritu."],
+["Juan","NT","Evangelios",21,"Jesús, identidad, fe, amor","Centrado en la identidad de Jesús y la fe."],
+["Hechos","NT","Historia",28,"Iglesia, Espíritu, misión","Expansión de la iglesia primitiva."],
+["Romanos","NT","Paulinas",16,"Evangelio, gracia, fe, vida nueva","Exposición amplia de la teología paulina."],
+["1 Corintios","NT","Paulinas",16,"Iglesia, dones, amor, conflictos","Responde a problemas comunitarios y doctrinales."],
+["2 Corintios","NT","Paulinas",13,"Ministerio, debilidad, reconciliación","Teología de la debilidad y defensa del ministerio."],
+["Gálatas","NT","Paulinas",6,"Gracia, libertad, Espíritu","Justificación por la fe y libertad cristiana."],
+["Efesios","NT","Paulinas",6,"Iglesia, unidad, nueva vida","Identidad de la iglesia y ética cristiana."],
+["Filipenses","NT","Paulinas",4,"Gozo, humildad, perseverancia","Gozo y llamado a la humildad."],
+["Colosenses","NT","Paulinas",4,"Cristo, plenitud, nueva vida","Centralidad de Cristo y conducta renovada."],
+["1 Tesalonicenses","NT","Paulinas",5,"Esperanza, santidad, retorno","Ánimo a una iglesia joven."],
+["2 Tesalonicenses","NT","Paulinas",3,"Perseverancia, día del Señor","Aclara confusiones sobre el futuro."],
+["1 Timoteo","NT","Pastorales",6,"Iglesia, liderazgo, doctrina","Orientaciones para organización y enseñanza."],
+["2 Timoteo","NT","Pastorales",4,"Fidelidad, perseverancia, Escritura","Últimas exhortaciones de Pablo a Timoteo."],
+["Tito","NT","Pastorales",3,"Liderazgo, conducta, buenas obras","Orden comunitario y ética cristiana."],
+["Filemón","NT","Paulinas",1,"Perdón, reconciliación, fraternidad","Carta breve sobre reconciliación."],
+["Hebreos","NT","General",13,"Cristo, perseverancia, fe","Supremacía de Cristo y perseverancia."],
+["Santiago","NT","General",5,"Fe práctica, palabras, sabiduría","Sabiduría cristiana práctica."],
+["1 Pedro","NT","General",5,"Sufrimiento, esperanza, santidad","Ánimo a creyentes bajo presión."],
+["2 Pedro","NT","General",3,"Crecimiento, verdad, esperanza","Madurez y discernimiento frente al error."],
+["1 Juan","NT","General",5,"Amor, verdad, seguridad","Vida cristiana mediante amor, verdad y obediencia."],
+["2 Juan","NT","General",1,"Verdad, amor, discernimiento","Breve exhortación a permanecer en verdad y amor."],
+["3 Juan","NT","General",1,"Hospitalidad, liderazgo","Carta sobre hospitalidad y conducta comunitaria."],
+["Judas","NT","General",1,"Fidelidad, error, perseverancia","Advierte contra falsas enseñanzas."],
+["Apocalipsis","NT","Apocalíptico",22,"Esperanza, juicio, victoria, nueva creación","Visión simbólica de conflicto, juicio y nueva creación."]
+].map((x,i)=>({id:i+1,name:x[0],test:x[1],genre:x[2],chapters:x[3],themes:x[4],summary:x[5]}));
+
+
+const DEUTERO_BOOKS = [
+["Tobías","DC","Deuterocanónico",14,"Providencia, familia, fidelidad, oración","Relato sapiencial sobre Tobías, Sara, Rafael y la providencia divina."],
+["Judit","DC","Deuterocanónico",16,"Valentía, liberación, fidelidad","Narración de una mujer judía que actúa con valentía en una crisis nacional."],
+["Sabiduría","DC","Sabiduría",19,"Sabiduría, justicia, inmortalidad","Reflexión sapiencial helenística sobre justicia, sabiduría y destino del justo."],
+["Eclesiástico (Sirácida)","DC","Sabiduría",51,"Sabiduría, conducta, amistad, familia","Colección extensa de sabiduría práctica atribuida a Ben Sira."],
+["Baruc","DC","Deuterocanónico",6,"Arrepentimiento, sabiduría, esperanza","Oraciones y exhortaciones vinculadas al exilio y a la sabiduría."],
+["1 Macabeos","DC","Histórico",16,"Resistencia, identidad, templo","Historia de la revuelta macabea y la defensa de la identidad judía."],
+["2 Macabeos","DC","Histórico",15,"Martirio, resurrección, templo","Relato teológico de persecución, martirio y esperanza de resurrección."],
+["Adiciones a Ester","DC","Adición deuterocanónica",6,"Oración, providencia, identidad","Secciones griegas adicionales al libro de Ester, con oraciones y referencias explícitas a Dios."],
+["Adiciones a Daniel","DC","Adición deuterocanónica",3,"Fidelidad, oración, justicia","Incluye Oración de Azarías y Cántico de los Tres Jóvenes, Susana, y Bel y el Dragón."]
+].map((x,i)=>({id:100+i,name:x[0],test:"DC",genre:x[2],chapters:x[3],themes:x[4],summary:x[5],canon:"deut"}));
+
+const EXTRA_BOOKS = [
+["1 Esdras","EX","Apócrifo/antiguo",9,"Retorno, templo, historia","Reelaboración antigua de materiales de Crónicas, Esdras y Nehemías."],
+["2 Esdras / 4 Esdras","EX","Apocalíptico antiguo",16,"Teodicea, juicio, esperanza","Obra apocalíptica judía y cristiana transmitida en distintas formas."],
+["Oración de Manasés","EX","Oración antigua",1,"Arrepentimiento, misericordia","Oración penitencial atribuida al rey Manasés."],
+["Salmo 151","EX","Salmo antiguo",1,"David, elección, alabanza","Salmo adicional conservado en la Septuaginta y otras tradiciones."],
+["3 Macabeos","EX","Histórico antiguo",7,"Persecución, liberación","Relato sobre persecución de judíos en Egipto ptolemaico."],
+["4 Macabeos","EX","Filosófico antiguo",18,"Razón, martirio, dominio propio","Discurso filosófico sobre razón piadosa y martirio."]
+].map((x,i)=>({id:200+i,name:x[0],test:"EX",genre:x[2],chapters:x[3],themes:x[4],summary:x[5],canon:"extra"}));
+
+BOOKS.forEach(b=>b.canon="canon");
+BOOKS.push(...DEUTERO_BOOKS,...EXTRA_BOOKS);
+
+
+
+const LANGUAGE_META = {
+  "Génesis":{lang:"Hebreo bíblico",code:"he",note:"Composición conservada principalmente en hebreo."},
+  "Éxodo":{lang:"Hebreo bíblico",code:"he",note:"Texto transmitido principalmente en hebreo."},
+  "Levítico":{lang:"Hebreo bíblico",code:"he",note:"Texto transmitido principalmente en hebreo."},
+  "Números":{lang:"Hebreo bíblico",code:"he",note:"Texto transmitido principalmente en hebreo."},
+  "Deuteronomio":{lang:"Hebreo bíblico",code:"he",note:"Texto transmitido principalmente en hebreo."},
+  "Esdras":{lang:"Hebreo + arameo",code:"mix",note:"Incluye secciones extensas en arameo imperial junto a hebreo."},
+  "Daniel":{lang:"Hebreo + arameo",code:"mix",note:"Daniel 2:4b–7:28 está en arameo; el resto principal en hebreo."},
+  "Jeremías":{lang:"Hebreo bíblico",code:"he",note:"Texto hebreo con tradición griega significativamente distinta en extensión y orden."},
+  "Tobías":{lang:"Arameo/hebreo; conservado completo en griego",code:"mix",note:"Se hallaron fragmentos arameos y hebreos en Qumrán; la forma completa se conserva en traducciones antiguas, especialmente griego."},
+  "Judit":{lang:"Probablemente hebreo; conservado en griego",code:"mix",note:"No se conserva un original hebreo completo; la tradición textual principal disponible es griega."},
+  "Sabiduría":{lang:"Griego koiné",code:"gr",note:"Compuesto originalmente en griego."},
+  "Eclesiástico (Sirácida)":{lang:"Hebreo; también griego",code:"mix",note:"Se conservan importantes fragmentos hebreos y una antigua traducción griega realizada por el nieto del autor."},
+  "Baruc":{lang:"Probablemente hebreo; conservado en griego",code:"mix",note:"La forma completa se conserva principalmente en griego; la lengua original de partes del libro es discutida."},
+  "1 Macabeos":{lang:"Probablemente hebreo; conservado en griego",code:"mix",note:"Antiguas fuentes indican composición hebrea; el texto completo conservado está en griego."},
+  "2 Macabeos":{lang:"Griego koiné",code:"gr",note:"Compuesto en griego como resumen de una obra anterior de Jasón de Cirene."},
+  "Adiciones a Ester":{lang:"Griego",code:"gr",note:"Adiciones conservadas en la tradición griega de Ester."},
+  "Adiciones a Daniel":{lang:"Griego",code:"gr",note:"Se conservan en las versiones griegas de Daniel."}
+};
+
+const HEBREW_BOOKS = ["Josué","Jueces","Rut","1 Samuel","2 Samuel","1 Reyes","2 Reyes","1 Crónicas","2 Crónicas","Nehemías","Ester","Job","Salmos","Proverbios","Eclesiastés","Cantares","Isaías","Lamentaciones","Ezequiel","Oseas","Joel","Amós","Abdías","Jonás","Miqueas","Nahúm","Habacuc","Sofonías","Hageo","Zacarías","Malaquías"];
+HEBREW_BOOKS.forEach(n=>{if(!LANGUAGE_META[n]) LANGUAGE_META[n]={lang:"Hebreo bíblico",code:"he",note:"Texto transmitido principalmente en hebreo."};});
+
+const GREEK_NT = ["Mateo","Marcos","Lucas","Juan","Hechos","Romanos","1 Corintios","2 Corintios","Gálatas","Efesios","Filipenses","Colosenses","1 Tesalonicenses","2 Tesalonicenses","1 Timoteo","2 Timoteo","Tito","Filemón","Hebreos","Santiago","1 Pedro","2 Pedro","1 Juan","2 Juan","3 Juan","Judas","Apocalipsis"];
+GREEK_NT.forEach(n=>LANGUAGE_META[n]={lang:"Griego koiné",code:"gr",note:"El texto del Nuevo Testamento se conserva y estudia en griego koiné."});
+
+const EXTRA_LANG = {
+ "1 Esdras":{lang:"Griego",code:"gr",note:"Conservado principalmente en griego."},
+ "2 Esdras / 4 Esdras":{lang:"Composición compleja; varias lenguas",code:"mix",note:"Transmitido en versiones antiguas; la historia textual es compleja."},
+ "Oración de Manasés":{lang:"Griego",code:"gr",note:"Conservada en tradición griega y otras versiones."},
+ "Salmo 151":{lang:"Hebreo y griego",code:"mix",note:"Existe una forma hebrea relacionada en Qumrán y una forma griega en la Septuaginta."},
+ "3 Macabeos":{lang:"Griego",code:"gr",note:"Compuesto en griego."},
+ "4 Macabeos":{lang:"Griego",code:"gr",note:"Compuesto en griego."}
+};
+Object.assign(LANGUAGE_META,EXTRA_LANG);
+
+function enrichLanguage(){
+  BOOKS.forEach(b=>{
+    const m=LANGUAGE_META[b.name] || (b.test==="NT"?{lang:"Griego koiné",code:"gr",note:"Texto del Nuevo Testamento en griego koiné."}:{lang:"Hebreo bíblico",code:"he",note:"Texto transmitido principalmente en hebreo."});
+    b.originalLanguage=m.lang;b.langCode=m.code;b.langNote=m.note;
+  });
+}
+function langBadge(b){
+  const cls=b.langCode==="he"?"he":b.langCode==="gr"?"gr":b.langCode==="ar"?"ar":"mix";
+  return `<span class="lang-badge ${cls}">${b.langCode==="he"?"א":b.langCode==="gr"?"Ω":"אΩ"} ${esc(b.originalLanguage)}</span>`;
+}
+
+const AUTHORSHIP = {
+"Génesis":["Moisés","Tradicionalmente atribuido a Moisés.","La investigación moderna suele entender el Pentateuco como resultado de varias tradiciones y procesos editoriales."],
+"Éxodo":["Moisés","Tradicionalmente atribuido a Moisés.","La composición probablemente incorpora materiales legales, narrativos y sacerdotales de distintas etapas."],
+"Levítico":["Moisés","Tradicionalmente atribuido a Moisés.","Suele asociarse a tradiciones sacerdotales desarrolladas y editadas dentro de Israel."],
+"Números":["Moisés","Tradicionalmente atribuido a Moisés.","La forma final refleja diversas capas narrativas, legales y sacerdotales."],
+"Deuteronomio":["Moisés","Tradicionalmente vinculado a Moisés.","Muchos estudios distinguen un núcleo deuteronómico y posteriores procesos editoriales."],
+"Josué":["Josué","Tradicionalmente atribuido en gran parte a Josué.","Suele situarse dentro de una historia deuteronomista con edición posterior."],
+"Jueces":["Samuel","Tradición judía lo relaciona con Samuel.","La obra parece ser una compilación y edición de ciclos narrativos antiguos."],
+"Rut":["Samuel","Atribución tradicional a Samuel.","El autor es anónimo; probablemente fue compuesto posteriormente a los hechos narrados."],
+"1 Samuel":["Samuel, Gad y Natán","Tradición basada en 1 Crónicas 29:29.","La forma final es anónima y reúne múltiples fuentes y tradiciones."],
+"2 Samuel":["Gad y Natán","Tradicionalmente vinculados a la historia de David.","La obra final es anónima y editorialmente compleja."],
+"1 Reyes":["Jeremías","Tradición judía lo atribuye a Jeremías.","Generalmente se considera parte de una historia deuteronomista anónima."],
+"2 Reyes":["Jeremías","Tradición judía lo atribuye a Jeremías.","Generalmente se considera parte de una historia deuteronomista anónima."],
+"1 Crónicas":["Esdras","Tradicionalmente asociado a Esdras.","El autor/editor suele llamarse el Cronista; identidad exacta desconocida."],
+"2 Crónicas":["Esdras","Tradicionalmente asociado a Esdras.","El autor/editor suele llamarse el Cronista; identidad exacta desconocida."],
+"Esdras":["Esdras","Tradicionalmente atribuido a Esdras.","Contiene memorias, documentos y materiales editoriales; la autoría final es debatida."],
+"Nehemías":["Nehemías","Incluye memorias en primera persona de Nehemías.","La forma final incluye edición y materiales adicionales."],
+"Ester":["Mardoqueo","Algunas tradiciones lo relacionan con Mardoqueo.","Autor anónimo; probablemente compuesto en época persa o helenística temprana."],
+"Job":["Desconocido","No existe una atribución segura.","Obra sapiencial anónima de fecha y autor debatidos."],
+"Salmos":["David y otros","Muchos salmos se atribuyen a David; otros a Asaf, hijos de Coré, Salomón, Moisés y autores anónimos.","Es una colección formada durante siglos."],
+"Proverbios":["Salomón y otros sabios","Grandes secciones se atribuyen a Salomón; también aparecen Agur y Lemuel.","Colección sapiencial compuesta y editada en varias etapas."],
+"Eclesiastés":["Qohelet, tradicionalmente Salomón","La tradición lo relacionó con Salomón.","El texto se presenta con la voz de Qohelet; la identificación exacta con Salomón es discutida."],
+"Cantares":["Salomón","Tradicionalmente asociado a Salomón.","Puede ser una colección de poemas amorosos; autoría exacta discutida."],
+"Isaías":["Isaías hijo de Amoz","Capítulos iniciales se vinculan directamente al profeta Isaías.","Muchos estudios distinguen secciones y etapas editoriales posteriores."],
+"Jeremías":["Jeremías y Baruc","Jeremías es la figura profética central y Baruc aparece como escriba.","El libro refleja recopilación y edición posterior de oráculos y narraciones."],
+"Lamentaciones":["Jeremías","Tradicionalmente atribuido a Jeremías.","La obra es anónima y contiene varios poemas con estilos distintos."],
+"Ezequiel":["Ezequiel","El libro se presenta como palabras y visiones de Ezequiel.","Puede incluir organización y edición de discípulos o tradiciones posteriores."],
+"Daniel":["Daniel","Tradicionalmente atribuido al profeta Daniel.","La investigación crítica suele situar la forma final del libro en época macabea."],
+"Oseas":["Oseas","Atribuido al profeta Oseas.","Puede incluir edición posterior de sus oráculos."],
+"Joel":["Joel","Atribuido al profeta Joel.","La fecha y contexto exactos son debatidos."],
+"Amós":["Amós","Atribuido al profeta Amós.","Puede incluir materiales editoriales posteriores."],
+"Abdías":["Abdías","Atribuido al profeta Abdías.","Identidad y fecha precisas desconocidas."],
+"Jonás":["Desconocido","Tradicionalmente relacionado con el profeta Jonás.","La obra narrativa es anónima."],
+"Miqueas":["Miqueas","Atribuido al profeta Miqueas.","Puede contener desarrollo editorial posterior."],
+"Nahúm":["Nahúm","Atribuido al profeta Nahúm.","Poco se conoce de su identidad fuera del libro."],
+"Habacuc":["Habacuc","Atribuido al profeta Habacuc.","Identidad exacta desconocida."],
+"Sofonías":["Sofonías","Atribuido al profeta Sofonías.","El libro ofrece una genealogía poco usual del profeta."],
+"Hageo":["Hageo","Atribuido al profeta Hageo.","Oráculos fechados durante el periodo persa."],
+"Zacarías":["Zacarías","Capítulos 1–8 se vinculan claramente a Zacarías.","Los capítulos 9–14 suelen considerarse de composición posterior o distinta."],
+"Malaquías":["Malaquías / mensajero anónimo","Tradicionalmente tratado como nombre propio.","'Malaquías' puede significar 'mi mensajero'; la identidad del autor es incierta."],
+"Mateo":["Mateo","Tradición cristiana temprana lo atribuye al apóstol Mateo.","El evangelio es formalmente anónimo; la autoría mateana es tradicional y debatida."],
+"Marcos":["Marcos","Tradición temprana lo vincula con Juan Marcos y la predicación de Pedro.","El texto es formalmente anónimo."],
+"Lucas":["Lucas","Tradición temprana lo atribuye a Lucas, colaborador de Pablo.","Lucas y Hechos forman una obra unitaria; el autor no se nombra en el texto."],
+"Juan":["Juan","Tradicionalmente atribuido al apóstol Juan.","La relación entre el evangelista, el 'discípulo amado' y la comunidad joánica es debatida."],
+"Hechos":["Lucas","Tradicionalmente atribuido al mismo autor de Lucas.","La continuidad literaria con el evangelio de Lucas es ampliamente reconocida."],
+"Romanos":["Pablo","Atribuido a Pablo; menciona a Tercio como escriba.","Autoría paulina ampliamente aceptada."],
+"1 Corintios":["Pablo","Atribuido a Pablo.","Autoría paulina ampliamente aceptada."],
+"2 Corintios":["Pablo","Atribuido a Pablo.","Autoría paulina aceptada, aunque se debate si reúne más de una carta."],
+"Gálatas":["Pablo","Atribuido a Pablo.","Autoría paulina ampliamente aceptada."],
+"Efesios":["Pablo","Tradicionalmente atribuido a Pablo.","La autoría directa de Pablo es debatida en la investigación moderna."],
+"Filipenses":["Pablo","Atribuido a Pablo.","Autoría paulina ampliamente aceptada; puede integrar más de una carta."],
+"Colosenses":["Pablo","Tradicionalmente atribuido a Pablo.","La autoría directa de Pablo es debatida por algunos estudiosos."],
+"1 Tesalonicenses":["Pablo","Atribuido a Pablo, Silvano y Timoteo.","Generalmente considerada auténticamente paulina."],
+"2 Tesalonicenses":["Pablo","Tradicionalmente atribuido a Pablo.","La autoría paulina es debatida."],
+"1 Timoteo":["Pablo","Tradicionalmente atribuido a Pablo.","Muchos estudios modernos consideran posible una composición posterior en tradición paulina."],
+"2 Timoteo":["Pablo","Tradicionalmente atribuido a Pablo.","La autoría directa es debatida, aunque contiene rasgos personales fuertes."],
+"Tito":["Pablo","Tradicionalmente atribuido a Pablo.","La autoría directa es debatida en la investigación moderna."],
+"Filemón":["Pablo","Atribuido a Pablo.","Autoría paulina ampliamente aceptada."],
+"Hebreos":["Desconocido","Antiguamente se propusieron Pablo, Bernabé, Apolos y otros.","El propio texto no identifica al autor y no existe consenso."],
+"Santiago":["Santiago","Tradicionalmente atribuido a Santiago, hermano de Jesús.","La identificación exacta del autor y la fecha son debatidas."],
+"1 Pedro":["Pedro","Tradicionalmente atribuido al apóstol Pedro.","La autoría directa es debatida; el texto menciona a Silvano."],
+"2 Pedro":["Pedro","Tradicionalmente atribuido al apóstol Pedro.","Es uno de los escritos del NT cuya autoría petrina es más debatida."],
+"1 Juan":["Juan","Tradicionalmente vinculado al apóstol Juan.","El autor no se nombra; suele relacionarse con la tradición joánica."],
+"2 Juan":["'El Anciano'","El autor se identifica como 'el Anciano'.","Tradicionalmente vinculado con Juan o la comunidad joánica."],
+"3 Juan":["'El Anciano'","El autor se identifica como 'el Anciano'.","Tradicionalmente vinculado con Juan o la comunidad joánica."],
+"Judas":["Judas, hermano de Santiago","El autor se presenta como Judas, hermano de Santiago.","Tradicionalmente identificado con Judas, hermano de Jesús."],
+"Apocalipsis":["Juan de Patmos","El autor se identifica como Juan.","Tradicionalmente asociado al apóstol Juan, aunque su identidad exacta es discutida."],
+"Tobías":["Desconocido","La obra no ofrece una atribución histórica segura.","Probablemente composición judía anónima del periodo helenístico."],
+"Judit":["Desconocido","Sin autor tradicional seguro.","Narración judía anónima, probablemente del periodo helenístico."],
+"Sabiduría":["Salomón (voz literaria)","La tradición asoció la obra con Salomón.","La lengua y contexto apuntan a un autor judío helenístico, probablemente en Alejandría."],
+"Eclesiástico (Sirácida)":["Jesús ben Sirá","El prólogo identifica a Jesús, hijo de Sirá, como autor.","Es uno de los deuterocanónicos con autoría explícita relativamente clara."],
+"Baruc":["Baruc","Tradicionalmente atribuido a Baruc, escriba de Jeremías.","La obra probablemente reúne materiales de distintas fechas y autores."],
+"1 Macabeos":["Desconocido","Autor judío anónimo.","Probablemente escrito en hebreo, aunque se conserva completo en griego."],
+"2 Macabeos":["Autor anónimo; resumen de Jasón de Cirene","El propio libro afirma resumir una obra de Jasón de Cirene.","El autor del resumen es desconocido."],
+"Adiciones a Ester":["Desconocido","Sin autor conocido.","Materiales griegos añadidos a la forma hebrea de Ester."],
+"Adiciones a Daniel":["Desconocido","Sin autor conocido.","Relatos y oraciones conservados en la tradición griega de Daniel."],
+"1 Esdras":["Desconocido","Sin autor conocido.","Reelaboración antigua de tradiciones históricas."],
+"2 Esdras / 4 Esdras":["Desconocido","Se presenta bajo la figura de Esdras.","Compuesto por capas judías y cristianas en distintas etapas."],
+"Oración de Manasés":["Desconocido","Atribución literaria a Manasés.","Oración penitencial compuesta mucho después del rey histórico."],
+"Salmo 151":["David (atribución literaria)","El título lo vincula con David.","Autor histórico desconocido."],
+"3 Macabeos":["Desconocido","Sin autor conocido.","Obra judía helenística anónima."],
+"4 Macabeos":["Desconocido","Antiguamente atribuido por algunos a Josefo.","La autoría josefiana no se acepta generalmente; autor anónimo."]
+};
+
+function enrichAuthorship(){
+  BOOKS.forEach(b=>{
+    const a=AUTHORSHIP[b.name]||["Desconocido","No existe una atribución tradicional clara.","La autoría exacta no es conocida."];
+    b.author=a[0]; b.tradition=a[1]; b.scholar=a[2];
+  });
+}
+
+const PASSAGES = [
+["Génesis 50:20","Génesis","OT",["dolor","providencia","perdón","propósito"],"José reconoce que una historia marcada por daño puede ser redirigida hacia el bien.","Cierre de la historia de José y sus hermanos."],
+["Éxodo 14:14","Éxodo","OT",["miedo","confianza","crisis"],"En la crisis, Israel es llamado a no actuar desde el pánico.","Relato del cruce del mar."],
+["Josué 1:9","Josué","OT",["fortaleza","miedo","dirección"],"Josué recibe un llamado a valentía y confianza.","Inicio de su liderazgo."],
+["Rut 1:16","Rut","OT",["lealtad","amor","compromiso"],"Rut expresa una lealtad profunda y sostenida.","Momento decisivo de compromiso familiar."],
+["Salmos 23:1-4","Salmos","OT",["miedo","confianza","protección","ansiedad"],"Dios guía, sostiene y acompaña aun en momentos de oscuridad.","Salmo de confianza en Dios como pastor."],
+["Salmos 34:18","Salmos","OT",["dolor","consuelo","esperanza"],"Dios se acerca al corazón quebrantado.","Salmo de consuelo."],
+["Salmos 51:10-12","Salmos","OT",["arrepentimiento","perdón","restauración"],"La oración pide un corazón limpio y una renovación interior.","Oración penitencial."],
+["Salmos 119:105","Salmos","OT",["decisiones","dirección","sabiduría"],"La palabra de Dios orienta el camino.","Poema sobre la instrucción divina."],
+["Proverbios 3:5-6","Proverbios","OT",["decisiones","confianza","dirección"],"Confía en Dios más allá de tu propia comprensión.","Sabiduría práctica sobre orientación."],
+["Proverbios 4:23","Proverbios","OT",["corazón","límites","prudencia"],"Cuida tu interior porque de él brotan decisiones y conducta.","Consejo sapiencial."],
+["Proverbios 15:1","Proverbios","OT",["conflicto","palabras","relaciones"],"Una respuesta serena puede reducir la escalada del conflicto.","Sabiduría sobre palabras."],
+["Eclesiastés 3:1","Eclesiastés","OT",["tiempo","paciencia","cambio"],"Cada proceso tiene su tiempo.","Poema sobre ciclos de la vida."],
+["Isaías 40:31","Isaías","OT",["esperanza","fortaleza","paciencia"],"Quienes esperan en Dios renuevan fuerzas.","Mensaje de consuelo."],
+["Isaías 41:10","Isaías","OT",["miedo","fortaleza","confianza"],"No temas: Dios acompaña, fortalece y sostiene.","Oráculo de consuelo."],
+["Jeremías 29:11","Jeremías","OT",["esperanza","futuro","paciencia"],"La esperanza en medio del exilio está unida a paciencia y fidelidad.","Carta a exiliados."],
+["Miqueas 6:8","Miqueas","OT",["justicia","humildad","conducta"],"La vida fiel une justicia, misericordia y humildad.","Síntesis profética."],
+["Mateo 5:23-24","Mateo","NT",["reconciliación","responsabilidad","relaciones"],"La reconciliación con el otro recibe prioridad moral junto al culto.","Jesús vincula espiritualidad con reparación interpersonal."],
+["Mateo 6:33-34","Mateo","NT",["ansiedad","prioridades","confianza"],"No cargues hoy con toda la ansiedad del mañana.","Enseñanza de Jesús sobre preocupación."],
+["Mateo 11:28-30","Mateo","NT",["cansancio","descanso","consuelo"],"Jesús invita a quienes están cargados a encontrar descanso.","Invitación al descanso."],
+["Mateo 18:21-22","Mateo","NT",["perdón","relaciones","reconciliación"],"El perdón cristiano no se concibe como una concesión limitada.","Enseñanza de Jesús sobre perdón."],
+["Marcos 12:30-31","Marcos","NT",["amor","prójimo","conducta"],"Amar a Dios y al prójimo resume el centro de la vida moral cristiana.","Mandamientos principales."],
+["Lucas 6:31","Lucas","NT",["relaciones","empatía","conducta"],"Trata a los demás como deseas ser tratado.","Enseñanza ética de Jesús."],
+["Lucas 15:20-24","Lucas","NT",["perdón","restauración","gracia"],"La parábola muestra acogida, misericordia y restauración.","Parábola del hijo perdido."],
+["Juan 8:31-32","Juan","NT",["verdad","libertad","discernimiento"],"La verdad y el discipulado están vinculados con libertad.","Diálogo de Jesús sobre verdad."],
+["Juan 13:34-35","Juan","NT",["amor","relaciones","discipulado"],"El amor mutuo identifica el modo de vida de los discípulos.","Mandamiento nuevo."],
+["Romanos 5:3-5","Romanos","NT",["sufrimiento","esperanza","perseverancia"],"La prueba puede formar perseverancia, carácter y esperanza.","Pablo conecta sufrimiento y madurez."],
+["Romanos 12:2","Romanos","NT",["cambio","discernimiento","decisiones"],"La transformación interior permite discernir mejor lo que conviene.","Exhortación a una mente renovada."],
+["Romanos 12:18","Romanos","NT",["paz","conflicto","relaciones"],"Haz lo que dependa de ti para vivir en paz con los demás.","Convivencia cristiana."],
+["1 Corintios 13:4-7","1 Corintios","NT",["amor","paciencia","relaciones"],"El amor se describe por paciencia, bondad, verdad y perseverancia.","Himno al amor."],
+["2 Corintios 5:18-19","2 Corintios","NT",["reconciliación","gracia","misión"],"La reconciliación aparece como obra recibida y misión asumida.","Ministerio de reconciliación."],
+["Gálatas 5:22-23","Gálatas","NT",["carácter","amor","paciencia","autocontrol"],"El fruto del Espíritu se expresa en amor, paz, paciencia y dominio propio.","Vida en el Espíritu."],
+["Efesios 4:25-27","Efesios","NT",["verdad","enojo","relaciones"],"La verdad y la gestión prudente del enojo protegen la convivencia.","Nueva conducta."],
+["Efesios 4:32","Efesios","NT",["perdón","bondad","relaciones"],"Bondad, compasión y perdón deben marcar la convivencia.","Nueva conducta."],
+["Filipenses 4:6-7","Filipenses","NT",["ansiedad","oración","paz"],"La oración y la gratitud desplazan la ansiedad hacia la paz.","Exhortación de Pablo."],
+["Filipenses 4:8","Filipenses","NT",["pensamientos","discernimiento","paz"],"Orienta la mente hacia lo verdadero, justo y digno.","Disciplina del pensamiento."],
+["Colosenses 3:12-14","Colosenses","NT",["amor","perdón","paciencia"],"Compasión, humildad, paciencia y perdón se unen bajo el amor.","Nueva vida comunitaria."],
+["2 Timoteo 1:7","2 Timoteo","NT",["miedo","fortaleza","autocontrol"],"La fe no conduce a parálisis por temor, sino a fortaleza y dominio propio.","Ánimo a Timoteo."],
+["Santiago 1:5","Santiago","NT",["sabiduría","decisiones","oración"],"Quien necesita sabiduría puede pedirla a Dios.","Consejo práctico."],
+["Santiago 1:19","Santiago","NT",["conflicto","palabras","prudencia"],"Escucha con rapidez y habla con cuidado.","Autocontrol y escucha."],
+["1 Pedro 5:7","1 Pedro","NT",["ansiedad","confianza","consuelo"],"Entrega tus preocupaciones a Dios.","Exhortación a la confianza."],
+["1 Juan 1:9","1 Juan","NT",["confesión","perdón","restauración"],"La confesión sincera se vincula con perdón y limpieza.","Caminar en la luz."],
+["1 Juan 4:18","1 Juan","NT",["amor","miedo","seguridad"],"El amor maduro desplaza el temor que nace del castigo.","Reflexión sobre amor y confianza."],
+["Apocalipsis 21:4","Apocalipsis","NT",["esperanza","dolor","consuelo","futuro"],"La visión final promete un mundo sin muerte, llanto ni dolor.","Nueva creación."]
+].map((x,i)=>({id:i+1,ref:x[0],book:x[1],test:x[2],themes:x[3],text:x[4],context:x[5]}));
+
+
+const DEUTERO_PASSAGES = [
+["Tobías 4:15","Tobías","DC",["ética","relaciones","conducta"],"No hagas a otro lo que no quieres para ti.","Consejo moral de Tobit a su hijo; presenta una formulación negativa de la regla de oro."],
+["Tobías 8:5-8","Tobías","DC",["oración","matrimonio","amor"],"Tobías y Sara oran juntos, situando su unión bajo la mirada de Dios.","Escena de oración matrimonial."],
+["Judit 8:25-27","Judit","DC",["prueba","fidelidad","fortaleza"],"La dificultad es entendida como ocasión para probar fidelidad y perseverancia.","Discurso de Judit en un contexto de amenaza."],
+["Sabiduría 3:1-4","Sabiduría","DC",["muerte","esperanza","justos"],"La vida de los justos se presenta bajo el cuidado de Dios, incluso frente a la muerte.","Pasaje sobre esperanza del justo."],
+["Sabiduría 7:7-10","Sabiduría","DC",["sabiduría","discernimiento","prioridades"],"La sabiduría es preferida al poder, riqueza y prestigio.","Elogio de la sabiduría."],
+["Eclesiástico 2:1-6","Eclesiástico (Sirácida)","DC",["prueba","paciencia","confianza"],"Quien se dispone a servir a Dios debe prepararse para la prueba y permanecer firme.","Exhortación sapiencial."],
+["Eclesiástico 6:14-17","Eclesiástico (Sirácida)","DC",["amistad","fidelidad","relaciones"],"Un amigo fiel es descrito como refugio y tesoro.","Sabiduría sobre amistad."],
+["Eclesiástico 28:2","Eclesiástico (Sirácida)","DC",["perdón","relaciones","misericordia"],"El perdón hacia el prójimo se conecta con pedir perdón a Dios.","Enseñanza sapiencial sobre perdón."],
+["Baruc 4:21-22","Baruc","DC",["esperanza","consuelo","exilio"],"En medio de la aflicción se exhorta a mantener esperanza en la salvación de Dios.","Mensaje de consuelo."],
+["1 Macabeos 2:50","1 Macabeos","DC",["fidelidad","fortaleza","identidad"],"Se exhorta a permanecer firmes en el pacto en un tiempo de presión cultural.","Discurso de Matatías."],
+["2 Macabeos 7:9","2 Macabeos","DC",["martirio","resurrección","esperanza"],"Un mártir expresa esperanza en que Dios lo levantará nuevamente.","Relato de los siete hermanos."],
+["2 Macabeos 12:43-45","2 Macabeos","DC",["muerte","oración","resurrección"],"Se describe una ofrenda y oración por los muertos vinculada con esperanza en la resurrección.","Pasaje importante en debates sobre oración por los difuntos."],
+["Susana 1:42-44","Adiciones a Daniel","DC",["justicia","oración","inocencia"],"Susana clama a Dios en medio de una acusación injusta.","Relato griego añadido a Daniel."],
+["Oración de Azarías 1:3-5","Adiciones a Daniel","DC",["oración","arrepentimiento","justicia"],"Azarías reconoce justicia divina y confiesa la infidelidad del pueblo.","Oración penitencial dentro de la adición griega a Daniel."]
+].map((x,i)=>({id:1000+i,ref:x[0],book:x[1],test:"DC",themes:x[3],text:x[4],context:x[5],canon:"deut"}));
+
+const EXTRA_PASSAGES = [
+["Oración de Manasés 1:9-10","Oración de Manasés","EX",["arrepentimiento","misericordia"],"El orante reconoce su pecado y pide misericordia.","Oración penitencial transmitida en algunas tradiciones cristianas."],
+["Salmo 151:1","Salmo 151","EX",["David","humildad","elección"],"David recuerda su pequeñez antes de ser llamado entre sus hermanos.","Salmo adicional de tradición griega."]
+].map((x,i)=>({id:2000+i,ref:x[0],book:x[1],test:"EX",themes:x[3],text:x[4],context:x[5],canon:"extra"}));
+
+PASSAGES.forEach(p=>p.canon="canon");
+PASSAGES.push(...DEUTERO_PASSAGES,...EXTRA_PASSAGES);
+
+const CHARACTERS=[
+["Abraham","Génesis","Patriarca","Fe, promesa y obediencia.","Sara · Isaac · Lot"],
+["José","Génesis","Patriarca","Sufrimiento, providencia y perdón.","Jacob · hermanos · faraón"],
+["Moisés","Éxodo–Deuteronomio","Profeta y líder","Liberación, ley y liderazgo.","Aarón · Miriam · faraón"],
+["Josué","Josué","Líder","Continuidad del liderazgo y entrada en Canaán.","Moisés · Caleb"],
+["David","1–2 Samuel","Rey","Fe, liderazgo, pecado, arrepentimiento y consecuencias.","Saúl · Jonatán · Salomón"],
+["Salomón","1 Reyes","Rey","Sabiduría, templo y declive.","David · Roboam"],
+["Elías","1–2 Reyes","Profeta","Confrontación a la idolatría y fidelidad profética.","Acab · Jezabel · Eliseo"],
+["Isaías","Isaías","Profeta","Santidad, juicio, esperanza y restauración.","Reyes de Judá"],
+["Jeremías","Jeremías","Profeta","Dolor profético, juicio y nuevo pacto.","Judá · exiliados"],
+["Daniel","Daniel","Exiliado y profeta","Fidelidad en entorno hostil y esperanza.","Nabucodonosor · amigos"],
+["Rut","Rut","Figura de fidelidad","Lealtad, providencia y restauración.","Noemí · Booz"],
+["Ester","Ester","Reina","Valentía, identidad y preservación.","Mardoqueo · Asuero"],
+["Juan el Bautista","Evangelios","Profeta","Preparación del camino de Jesús.","Jesús · Herodes"],
+["Jesús","Evangelios","Centro del NT","Reino de Dios, salvación, discipulado, cruz y resurrección.","Discípulos · multitudes"],
+["Pedro","Evangelios / Hechos","Apóstol","Impulsividad, caída, restauración y liderazgo.","Jesús · Juan · Pablo"],
+["Juan","Evangelios / cartas","Apóstol","Amor, verdad, testimonio y comunidad.","Jesús · Pedro"],
+["Pablo","Hechos / cartas","Apóstol","Misión, gracia, fe y formación de iglesias.","Bernabé · Timoteo · Silas"],
+["María Magdalena","Evangelios","Discípula","Testimonio, fidelidad y resurrección.","Jesús · discípulos"],
+["Timoteo","Hechos / cartas","Colaborador apostólico","Formación, liderazgo y perseverancia.","Pablo"],
+["Santiago","Hechos / carta","Líder","Fe práctica, sabiduría y vida comunitaria.","Iglesia de Jerusalén"]
+];
+
+const TOPICS=[
+["Perdón y reparación","perdón responsabilidad verdad reconciliación","Salmos 51 · Mateo 5 · Efesios 4"],
+["Ansiedad y paz","miedo ansiedad oración paz confianza","Salmos 23 · Mateo 6 · Filipenses 4"],
+["Relaciones","amor paciencia verdad límites confianza","1 Corintios 13 · Efesios 4"],
+["Decisiones","sabiduría discernimiento dirección prudencia","Proverbios 3 · Santiago 1"],
+["Dolor y duelo","dolor consuelo esperanza pérdida","Salmos 34 · Apocalipsis 21"],
+["Esperanza","esperanza perseverancia futuro confianza","Isaías 40 · Romanos 5"],
+["Conflicto","palabras enojo paz autocontrol","Proverbios 15 · Santiago 1"],
+["Carácter","humildad paciencia autocontrol bondad","Gálatas 5 · Colosenses 3"],
+["Propósito","identidad llamado servicio fidelidad","Génesis 1 · Miqueas 6"],
+["Oración","oración búsqueda gratitud perseverancia","Mateo 7 · Filipenses 4"],
+["Verdad","verdad libertad discernimiento integridad","Juan 8 · Filipenses 4"],
+["Reconciliación","perdón responsabilidad reparación paz","Mateo 5 · 2 Corintios 5"]
+];
+
+const TIMELINE=[
+["Orígenes y patriarcas","Génesis 1–50 · creación, caída, diluvio, Abraham, Isaac, Jacob y José."],
+["Éxodo y Sinaí","Éxodo–Deuteronomio · liberación, pacto, ley y desierto."],
+["Conquista y jueces","Josué–Jueces · asentamiento en Canaán y ciclos de infidelidad."],
+["Monarquía unida","1 Samuel–1 Reyes 11 · Saúl, David y Salomón."],
+["Reinos divididos","1 Reyes 12–2 Reyes · Israel y Judá, ministerio profético y decadencia."],
+["Exilio","2 Reyes 24–25 · caída de Jerusalén y deportación a Babilonia."],
+["Retorno","Esdras–Nehemías · regreso del exilio y reconstrucción."],
+["Periodo intertestamentario","Etapa entre Malaquías y los Evangelios."],
+["Jesús","Mateo–Juan · nacimiento, ministerio, pasión, muerte y resurrección."],
+["Iglesia primitiva","Hechos · Pentecostés y expansión del evangelio."],
+["Cartas apostólicas","Romanos–Judas · doctrina, ética, iglesia y perseverancia."],
+["Esperanza final","Apocalipsis · juicio, victoria de Dios y nueva creación."]
+];
+
+const MAPS=[
+["Historia de la redención","Creación → caída → promesa → Israel → Cristo → iglesia → nueva creación."],
+["Pacto y promesa","Abraham → Sinaí → David → nuevo pacto → cumplimiento en Cristo."],
+["Reconciliación","Verdad → arrepentimiento → perdón → reparación → paz → confianza posible."],
+["Sabiduría práctica","Temor de Dios → discernimiento → palabras → decisiones → carácter."],
+["Vida cristiana","Gracia → fe → transformación → fruto → servicio → perseverancia."],
+["Esperanza bíblica","Sufrimiento → espera → fidelidad → restauración → nueva creación."]
+];
+
+const PLANS=[
+["7 días · Paz en la ansiedad",["Salmos 23:1-4","Isaías 41:10","Mateo 6:33-34","Juan 14:27","Filipenses 4:6-7","1 Pedro 5:7","Salmos 34:18"]],
+["7 días · Perdonar y reparar",["Salmos 51:10-12","Mateo 5:23-24","Mateo 18:21-22","Lucas 15:20-24","Efesios 4:32","1 Juan 1:9","2 Corintios 5:18-19"]],
+["7 días · Tomar decisiones",["Proverbios 3:5-6","Salmos 119:105","Romanos 12:2","Santiago 1:5","Filipenses 4:8","Miqueas 6:8","Eclesiastés 3:1"]],
+["7 días · Relaciones sanas",["Proverbios 4:23","Proverbios 15:1","Lucas 6:31","1 Corintios 13:4-7","Efesios 4:25-27","Romanos 12:18","Colosenses 3:12-14"]],
+["7 días · Esperanza",["Salmos 34:18","Isaías 40:31","Jeremías 29:11","Romanos 5:3-5","1 Pedro 5:7","2 Timoteo 1:7","Apocalipsis 21:4"]]
+];
+
+
+const VERSION_PROFILES={
+  rvr1909:{name:"Reina-Valera 1909",lang:"Español · histórica",accent:"blue"},
+  nvi:{name:"Nueva Versión Internacional (NVI)",lang:"Español · contemporánea",accent:"violet"},
+  ntv:{name:"Nueva Traducción Viviente (NTV)",lang:"Español · contemporánea",accent:"green"},
+  oso1569:{name:"Biblia del Oso 1569",lang:"Español histórico",accent:"gold"},
+  kjv1611:{name:"King James Version 1611",lang:"English",accent:"green"},
+  scriptura:{name:"Paráfrasis Scriptura",lang:"Español claro",accent:"violet"}
+};
+
+// Muestras locales verificadas de uso frecuente. Para referencias no incluidas,
+// la aplicación usa la paráfrasis/contexto y no fabrica una cita exacta.
+const VERSION_TEXTS={
+  "Salmos 23:1-4":{
+    rvr1909:"Jehová es mi pastor; nada me faltará…",
+    kjv1611:"The LORD is my shepherd; I shall not want…"
+  },
+  "Proverbios 3:5-6":{
+    rvr1909:"Fíate de Jehová de todo tu corazón, y no estribes en tu prudencia…",
+    kjv1611:"Trust in the LORD with all thine heart; and lean not unto thine own understanding…"
+  },
+  "Mateo 6:33-34":{
+    rvr1909:"Mas buscad primeramente el reino de Dios y su justicia…",
+    kjv1611:"But seek ye first the kingdom of God, and his righteousness…"
+  },
+  "1 Corintios 13:4-7":{
+    rvr1909:"La caridad es sufrida, es benigna…",
+    kjv1611:"Charity suffereth long, and is kind…"
+  },
+  "Filipenses 4:6-7":{
+    rvr1909:"Por nada estéis afanosos; sino sean notorias vuestras peticiones delante de Dios…",
+    kjv1611:"Be careful for nothing; but in every thing by prayer and supplication…"
+  }
+};
+
+const FAQS=[
+  "¿Qué enseña la Biblia sobre recuperar la confianza después de una traición?",
+  "¿Cómo distingue la Biblia perdón y reconciliación?",
+  "¿Qué puedo leer cuando tengo ansiedad?",
+  "¿Cómo tomar una decisión difícil según principios bíblicos?",
+  "¿Qué enseña Jesús sobre amar a alguien que me ha herido?",
+  "¿Qué significa Romanos 12:18 en una relación conflictiva?",
+  "¿Cómo se relacionan arrepentimiento y cambio de conducta?",
+  "¿Qué enseña la Biblia sobre la esperanza cuando no controlo el resultado?"
+];
+
+function renderVersionPills(){
+  const current=$("globalVersion").value;
+  $("versionPills").innerHTML=Object.entries(VERSION_PROFILES).map(([k,v])=>`<button class="version-pill ${k===current?"active":""}" onclick="setVersion('${k}')">${esc(v.name)}</button>`).join("");
+}
+function setVersion(k){
+  $("globalVersion").value=k;
+  renderVersionPills();
+  renderPassages();
+}
+function versionText(p,version){
+  if(version==="scriptura") return p.text;
+  if(version==="nvi" || version==="ntv"){
+    return "Referencia: " + p.ref + " · " + p.text + " [resumen contextual; consulta el texto completo en una edición autorizada de " + VERSION_PROFILES[version].name + "]";
+  }
+  return VERSION_TEXTS[p.ref]?.[version] || p.text;
+}
+function versionLabel(version){return VERSION_PROFILES[version]?.name||"Paráfrasis Scriptura"}
+
+function renderFAQs(){
+  $("faqGrid").innerHTML=FAQS.map(q=>`<button class="faq-card" onclick="useFAQ(${JSON.stringify(q).replace(/"/g,'&quot;')})"><b>${esc(q)}</b><span>Usar esta pregunta</span></button>`).join("");
+}
+function useFAQ(q){
+  $("askInput").value=q;activateView("ask");window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function answerQuestion(){
+  const q=$("askInput").value.trim();if(!q){alert("Escribe una pregunta.");return}
+  const testament=$("askTestament").value, count=+$("askCount").value, mode=$("askMode").value;
+  let pool=PASSAGES.filter(p=>{
+      const canonOK=state.askCanon==="all" || p.canon===state.askCanon;
+      const testOK=testament==="all" || p.test===testament;
+      return canonOK && testOK;
+    })
+    .map(p=>({...p,score:scorePassage(p,q)}))
+    .sort((a,b)=>b.score-a.score);
+  const positive=pool.filter(p=>p.score>0), chosen=(positive.length?positive:pool).slice(0,count);
+  const tags=classify(q), themes=[...new Set(chosen.flatMap(p=>p.themes))];
+  const version=$("globalVersion").value;
+
+  let intro="";
+  if(mode==="explain") intro="La pregunta se responde desde los temas y pasajes más relacionados de la base local. Primero se explica el principio bíblico y después se señalan límites de interpretación.";
+  if(mode==="apply") intro="La aplicación se concentra en aquello que depende de tu conducta: responsabilidad, discernimiento, límites, paciencia y coherencia.";
+  if(mode==="compare") intro="La respuesta compara cómo distintos pasajes abordan el mismo tema sin forzarlos a decir exactamente lo mismo.";
+  if(mode==="devotional") intro="La reflexión devocional usa los pasajes para examen personal, oración y práctica cotidiana.";
+
+  const principle = application(themes);
+  const sources=chosen.map(p=>`<div class="source-card ${p.canon==="deut"?"deut":p.canon==="extra"?"extra":""}"><b>${esc(p.ref)} · ${p.canon==="deut"?"Deuterocanónico":p.canon==="extra"?"Texto antiguo":"Canon 66"} · ${esc(versionLabel(version))}</b><small>${esc(versionText(p,version))}<br>${esc(p.context)}</small></div>`).join("");
+  const versionCards=Object.entries(VERSION_PROFILES).map(([k,v])=>{
+    const p=chosen[0];
+    return `<div class="version-card accent-${v.accent}"><div class="vname">${esc(v.name)}</div><div class="vmeta">${esc(v.lang)} · ${esc(p.ref)}</div><div class="vtext">${esc(versionText(p,k))}</div></div>`;
+  }).join("");
+
+  $("answerSection").innerHTML=`<div class="answer-card">
+    <div class="answer-head"><div><h3>Respuesta bíblica</h3><div class="chip-row" style="margin-top:7px">${tags.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div></div><span>${esc(versionLabel(version))}</span></div>
+    <div class="answer-main"><p>${esc(intro)}</p>${principle}<p><strong>En síntesis:</strong> los pasajes seleccionados apuntan a una respuesta que prioriza verdad, responsabilidad personal, sabiduría y una conducta coherente con el principio bíblico identificado. La aplicación no permite afirmar qué hará otra persona ni convertir un versículo en predicción.</p></div>
+    <div class="source-stack">${sources}</div>
+  </div>
+  <div class="callout gold">Los pasajes deuterocanónicos/apócrifos aparecen con fondo ámbar; el canon de 66 libros aparece en blanco/azul. Esto evita mezclar tradiciones como si todas las comunidades cristianas usaran el mismo canon.</div>
+  <div class="section">
+    <div class="section-head"><div><h3>Comparación de versiones</h3><p>Primera referencia de la respuesta en los seis perfiles disponibles.</p></div></div>
+    <div class="version-grid">${versionCards}</div>
+  </div>`;
+}
+
+
+const ORIGINAL_TEXTS={
+  "Génesis 1:1":{
+    lang:"Hebreo bíblico",dir:"rtl",source:"Texto hebreo tradicional",
+    original:"בְּרֵאשִׁית בָּרָא אֱלֹהִים אֵת הַשָּׁמַיִם וְאֵת הָאָרֶץ",
+    translit:"Bərēʾšît bārā ʾĕlōhîm ʾēt haššāmayim wəʾēt hāʾāreṣ",
+    literal:"En-principio creó Dios [marcador] los-cielos y [marcador] la-tierra.",
+    sense:"El hebreo no lleva artículo explícito en bereshit; según análisis sintáctico puede leerse como una apertura absoluta o constructa. 'Bara' suele tener a Dios como sujeto en la Biblia hebrea.",
+    words:[
+      ["בְּרֵאשִׁית","bereshit","al comienzo / en el principio"],
+      ["בָּרָא","bara","creó"],
+      ["אֱלֹהִים","elohim","Dios"],
+      ["הַשָּׁמַיִם","hashamayim","los cielos"],
+      ["הָאָרֶץ","ha'aretz","la tierra"]
+    ],
+    variants:"El versículo está muy estable textualmente. Las diferencias de traducción dependen más de sintaxis y filosofía de traducción que de variantes manuscritas significativas."
+  },
+  "Salmos 23:1":{
+    lang:"Hebreo bíblico",dir:"rtl",source:"Texto hebreo tradicional",
+    original:"יְהוָה רֹעִי לֹא אֶחְסָר",
+    translit:"YHWH roʿî, loʾ ʾeḥsār",
+    literal:"YHWH [es] mi-pastor; no careceré.",
+    sense:"Ro'i viene de la raíz רעה (r-ʿ-h), 'pastorear'. El verbo 'ser' está implícito. La frase puede expresar ausencia de carencia, no promesa de lujo.",
+    words:[
+      ["יְהוָה","YHWH","nombre divino"],
+      ["רֹעִי","ro'i","mi pastor"],
+      ["לֹא","lo","no"],
+      ["אֶחְסָר","eḥsar","careceré / tendré falta"]
+    ],
+    variants:"La lectura es estable. Las diferencias principales en español son estilísticas: 'nada me faltará', 'nada me falta', 'no careceré'."
+  },
+  "Proverbios 3:5":{
+    lang:"Hebreo bíblico",dir:"rtl",source:"Texto hebreo tradicional",
+    original:"בְּטַח אֶל־יְהוָה בְּכָל־לִבֶּךָ וְאֶל־בִּינָתְךָ אַל־תִּשָּׁעֵן",
+    translit:"Bəṭaḥ ʾel-YHWH bəḵol-libbeḵā, wəʾel-bînāṯeḵā ʾal-tiššāʿēn",
+    literal:"Confía hacia YHWH con todo tu-corazón, y en tu-entendimiento no te-apoyes.",
+    sense:"El 'corazón' (lev) en hebreo bíblico no se limita a emoción; puede incluir mente, voluntad y centro de decisión.",
+    words:[
+      ["בְּטַח","betaḥ","confía"],
+      ["לִבֶּךָ","libbekha","tu corazón / centro interior"],
+      ["בִּינָתְךָ","binatekha","tu entendimiento"],
+      ["תִּשָּׁעֵן","tisha'en","te apoyes / te recuestes"]
+    ],
+    variants:"No hay una variante mayor que altere el sentido general. La diferencia interpretativa clave está en cómo traducir 'corazón' y 'entendimiento'."
+  },
+  "Daniel 2:20":{
+    lang:"Arameo bíblico",dir:"rtl",source:"Arameo bíblico tradicional",
+    original:"לֶהֱוֵא שְׁמֵהּ דִּי־אֱלָהָא מְבָרַךְ מִן־עָלְמָא וְעַד־עָלְמָא",
+    translit:"Lehewe šəmeh dî-ʾĕlāhā məḇāraḵ min-ʿālmā wəʿad-ʿālmā",
+    literal:"Sea el nombre de Dios bendecido desde la eternidad y hasta la eternidad.",
+    sense:"El arameo de Daniel comparte raíces semíticas con el hebreo, pero presenta formas gramaticales y vocabulario propios.",
+    words:[
+      ["אֱלָהָא","elaha","Dios"],
+      ["מְבָרַךְ","mevarakh","bendecido"],
+      ["עָלְמָא","alma","edad / eternidad"]
+    ],
+    variants:"El valor principal de este ejemplo es mostrar que parte del Antiguo Testamento no está en hebreo sino en arameo."
+  },
+  "Juan 1:1":{
+    lang:"Griego koiné",dir:"ltr",source:"Texto griego del NT",
+    original:"Ἐν ἀρχῇ ἦν ὁ λόγος, καὶ ὁ λόγος ἦν πρὸς τὸν θεόν, καὶ θεὸς ἦν ὁ λόγος.",
+    translit:"En archē ēn ho logos, kai ho logos ēn pros ton theon, kai theos ēn ho logos.",
+    literal:"En [el] principio era el Logos, y el Logos estaba hacia/con Dios, y Dios era el Logos.",
+    sense:"Logos puede significar palabra, mensaje, razón o discurso según contexto. En Juan adquiere un uso teológico propio. La ausencia de artículo ante theos en la última cláusula no equivale automáticamente a indefinido.",
+    words:[
+      ["ἀρχῇ","archē","principio / comienzo"],
+      ["λόγος","logos","palabra / discurso / razón"],
+      ["πρὸς","pros","hacia / con"],
+      ["θεός","theos","Dios / divino según sintaxis"]
+    ],
+    variants:"La cláusula es textualmente muy estable; la discusión principal es gramatical y teológica, no una gran variante manuscrita."
+  },
+  "Mateo 6:33":{
+    lang:"Griego koiné",dir:"ltr",source:"Texto griego del NT",
+    original:"ζητεῖτε δὲ πρῶτον τὴν βασιλείαν [τοῦ θεοῦ] καὶ τὴν δικαιοσύνην αὐτοῦ",
+    translit:"zēteite de prōton tēn basileian [tou theou] kai tēn dikaiosynēn autou",
+    literal:"Busquen, pues, primero el reino [de Dios] y su justicia.",
+    sense:"Zēteite es imperativo presente: puede sugerir búsqueda continua. Basileia es reinado/reino; dikaiosynē abarca justicia, rectitud o conducta conforme a lo justo.",
+    words:[
+      ["ζητεῖτε","zēteite","busquen / sigan buscando"],
+      ["πρῶτον","prōton","primero"],
+      ["βασιλείαν","basileian","reino / reinado"],
+      ["δικαιοσύνην","dikaiosynēn","justicia / rectitud"]
+    ],
+    variants:"Algunos testigos difieren en la presencia explícita de 'de Dios'. La idea del reino y su justicia permanece central."
+  },
+  "1 Corintios 13:4":{
+    lang:"Griego koiné",dir:"ltr",source:"Texto griego del NT",
+    original:"Ἡ ἀγάπη μακροθυμεῖ, χρηστεύεται ἡ ἀγάπη",
+    translit:"Hē agapē makrothymei, chrēsteuetai hē agapē",
+    literal:"El amor tiene-larga-paciencia; actúa-con-bondad el amor.",
+    sense:"Agapē no significa por sí sola 'amor perfecto'; su sentido se define por el contexto. Makrothymei describe paciencia prolongada, especialmente frente a provocación.",
+    words:[
+      ["ἀγάπη","agapē","amor"],
+      ["μακροθυμεῖ","makrothymei","es paciente / soporta por largo tiempo"],
+      ["χρηστεύεται","chrēsteuetai","actúa con bondad"]
+    ],
+    variants:"La lectura es estable. Las traducciones varían principalmente en cómo expresar los verbos de paciencia y bondad."
+  },
+  "Filipenses 4:6":{
+    lang:"Griego koiné",dir:"ltr",source:"Texto griego del NT",
+    original:"μηδὲν μεριμνᾶτε, ἀλλ’ ἐν παντὶ τῇ προσευχῇ καὶ τῇ δεήσει",
+    translit:"mēden merimnate, all' en panti tē proseuchē kai tē deēsei",
+    literal:"Por nada estén-ansiosos, sino en todo mediante oración y súplica...",
+    sense:"Merimnaō puede significar preocuparse o estar ansioso; el contexto contrapone la preocupación absorbente con oración, petición y gratitud.",
+    words:[
+      ["μηδὲν","mēden","nada"],
+      ["μεριμνᾶτε","merimnate","estén ansiosos / se preocupen"],
+      ["προσευχῇ","proseuchē","oración"],
+      ["δεήσει","deēsei","súplica / petición"]
+    ],
+    variants:"No hay una variante principal que cambie el núcleo del mandato; las diferencias de traducción giran alrededor de 'ansioso', 'afanosos' o 'preocupados'."
+  }
+};
+
+function renderOriginalRefs(){
+  $("origRef").innerHTML=Object.keys(ORIGINAL_TEXTS).map(r=>`<option>${esc(r)}</option>`).join("");
+  analyzeOriginal();
+}
+function analyzeOriginal(){
+  const ref=$("origRef").value,layer=$("origLayer").value,d=ORIGINAL_TEXTS[ref];
+  if(!d)return;
+  const gloss=d.words.map(w=>`<div class="gloss"><b>${esc(w[0])}</b><span>${esc(w[1])}</span><span>${esc(w[2])}</span></div>`).join("");
+  const literal=`<div class="analysis-block"><h4>Glosa literal</h4><p>${esc(d.literal)}</p></div>`;
+  const semantic=`<div class="analysis-block"><h4>Rango semántico y gramática</h4><p>${esc(d.sense)}</p></div>`;
+  const variants=`<div class="analysis-block"><h4>Variantes y transmisión</h4><p>${esc(d.variants)}</p></div>`;
+  let lower="";
+  if(layer==="all") lower=`<div class="analysis">${literal}${semantic}</div><div class="section">${variants}</div>`;
+  if(layer==="literal") lower=literal;
+  if(layer==="semantic") lower=semantic;
+  if(layer==="variants") lower=variants;
+
+  $("originalAnalysis").innerHTML=`<div class="detail-card">
+    <div class="section-head"><div><h3>${esc(ref)}</h3><p>${esc(d.lang)}</p></div><span class="source-badge">${esc(d.source)}</span></div>
+    <div class="interlinear-shell">
+      <div class="interlinear-pane original">
+        <h4>Texto original</h4>
+        <div class="interlinear-large ${d.dir==="rtl"?"rtl":"greek"}">${esc(d.original)}</div>
+        <div class="translit"><strong>Transliteración:</strong> ${esc(d.translit)}</div>
+      </div>
+      <div class="interlinear-pane translation">
+        <h4>Traducción textual / ultraliteral</h4>
+        <div class="literal-line">${esc(d.literal)}</div>
+      </div>
+    </div>
+    <div class="gloss-grid">${gloss}</div>
+  </div>
+  <div style="margin-top:14px">${lower}</div>
+  <div class="callout gold"><strong>Lectura responsable:</strong> “literal” no significa automáticamente “mejor”. La sintaxis, el género literario, el contexto y el rango semántico determinan cómo una palabra debe traducirse en cada pasaje.</div>`;
+}
+const MODES={
+study:["Estudio","Contexto + principio + aplicación"],
+devotional:["Devocional","Reflexión personal y práctica"],
+prayer:["Oración","Pasajes + oración guiada"],
+relationship:["Relaciones","Confianza, límites y reconciliación"],
+decision:["Decisión","Sabiduría, motivos y responsabilidad"]
+};
+
+let state={
+  mode:"study",
+  askCanon:"all",
+  selected:[],
+  favs:new Set(JSON.parse(localStorage.getItem("scripturaV4Favs")||"[]"))
+};
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+const norm=s=>String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const toks=s=>norm(s).split(/[^a-z0-9ñ]+/).filter(x=>x.length>2);
+
+function activateView(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id===id));
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.view===id));
+  const meta={
+    home:["Inicio","Tu espacio de estudio bíblico"],
+    ask:["Preguntar","Pregunta y recibe una respuesta bíblica estructurada"],
+    study:["Estudio guiado","Consulta, contexto y aplicación"],
+    bible:["Biblioteca bíblica","66 libros y navegación por capítulos"],
+    originals:["Idiomas originales","Hebreo, arameo y griego koiné con análisis léxico"],
+    characters:["Personajes","Perfiles y relaciones bíblicas"],
+    topics:["Temas","Rutas temáticas de estudio"],
+    timeline:["Cronología","Historia bíblica simplificada"],
+    maps:["Mapas conceptuales","Ideas y relaciones clave"],
+    compare:["Comparar","Contrasta dos pasajes"],
+    plans:["Planes de lectura","Rutas guiadas de 7 días"],
+    notes:["Notas","Reflexiones personales"],
+    search:["Buscar","Buscador global"]
+  };
+  $("pageTitle").textContent=meta[id][0];$("pageSub").textContent=meta[id][1];
+  $("sidebar").classList.remove("open");
+}
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>activateView(b.dataset.view));
+$("menuBtn").onclick=()=>$("sidebar").classList.toggle("open");
+
+function quickTopic(topic){
+  activateView("study");
+  $("question").value=`Quiero un estudio bíblico sobre ${topic}.`;
+}
+
+function renderModes(){
+  $("modes").innerHTML="";
+  Object.entries(MODES).forEach(([k,v])=>{
+    let b=document.createElement("button");b.className="mode-card"+(state.mode===k?" active":"");
+    b.innerHTML=`<b>${v[0]}</b><span>${v[1]}</span>`;
+    b.onclick=()=>{state.mode=k;renderModes()};$("modes").appendChild(b);
+  });
+}
+
+function scorePassage(p,q){
+  const qt=toks(q), hay=toks(p.themes.join(" ")+" "+p.ref+" "+p.book+" "+p.text+" "+p.context);
+  let s=0;
+  qt.forEach(t=>{if(hay.includes(t))s+=4;else if(hay.some(x=>x.startsWith(t)||t.startsWith(x)))s+=2});
+  const n=norm(q);
+  const aliases=[
+    [["miedo","temor","ansiedad","preocupacion"],["miedo","ansiedad","paz","confianza"]],
+    [["perdon","culpa","falle","fallado","traicion","arrepiento"],["perdón","arrepentimiento","restauración","reconciliación"]],
+    [["decision","decidir","camino","rumbo"],["decisiones","sabiduría","dirección","discernimiento"]],
+    [["amor","pareja","relacion","confianza","reconciliar"],["amor","relaciones","paciencia","perdón","reconciliación"]],
+    [["dolor","triste","sufr","duelo","perdida"],["dolor","consuelo","esperanza"]],
+    [["enojo","pelea","discusion","conflicto"],["conflicto","paz","palabras","autocontrol"]],
+    [["futuro","esperanza"],["esperanza","futuro","confianza","perseverancia"]]
+  ];
+  aliases.forEach(([ks,ts])=>{if(ks.some(k=>n.includes(norm(k)))&&ts.some(t=>p.themes.includes(t)))s+=5});
+  if(state.mode==="relationship"&&p.themes.some(t=>["amor","relaciones","perdón","reconciliación","verdad","paciencia"].includes(t)))s+=4;
+  if(state.mode==="decision"&&p.themes.some(t=>["decisiones","sabiduría","discernimiento","dirección"].includes(t)))s+=4;
+  if(state.mode==="prayer"&&p.themes.includes("oración"))s+=3;
+  return s;
+}
+
+function classify(q){
+  const n=norm(q),tags=[];
+  [["Relaciones",["pareja","relacion","confianza","reconciliar","amor"]],
+   ["Perdón",["perdon","culpa","fallado","traicion"]],
+   ["Ansiedad",["miedo","ansiedad","temor","preocupacion"]],
+   ["Decisiones",["decision","decidir","camino","rumbo"]],
+   ["Dolor",["dolor","duelo","triste","perdida"]],
+   ["Esperanza",["futuro","esperanza"]],
+   ["Conflicto",["pelea","conflicto","enojo","discusion"]]
+  ].forEach(([tag,keys])=>{if(keys.some(k=>n.includes(k)))tags.push(tag)});
+  return tags.length?tags:["Discernimiento"];
+}
+
+function runStudy(){
+  const q=$("question").value.trim();if(!q){alert("Escribe una consulta.");return}
+  let pool=PASSAGES.filter(p=>{
+    const c=$("studyCanon").value;
+    const canonOK=c==="all" || p.canon===c;
+    const t=$("testament").value;
+    const testOK=t==="all" || p.test===t || (p.canon==="deut" && t==="all");
+    return canonOK && testOK;
+  }).map(p=>({...p,score:scorePassage(p,q)})).sort((a,b)=>b.score-a.score);
+  let pos=pool.filter(p=>p.score>0);state.selected=(pos.length?pos:pool).slice(0,+$("count").value);
+  renderPassages();renderAnalysis();saveHistory();
+}
+function randomPassage(){
+  let pool=PASSAGES.filter(p=>{
+    const c=$("studyCanon").value;
+    const canonOK=c==="all" || p.canon===c;
+    const t=$("testament").value;
+    const testOK=t==="all" || p.test===t;
+    return canonOK && testOK;
+  });
+  const a=new Uint32Array(1);crypto.getRandomValues(a);state.selected=[pool[a[0]%pool.length]];
+  renderPassages();$("analysis").innerHTML=`<div class="callout">Este pasaje fue elegido al azar únicamente como lectura. No se interpreta como señal, predicción ni mensaje oculto sobre el futuro.</div>`;
+}
+
+function renderPassages(){
+  const version=$("globalVersion")?.value||"scriptura";
+  $("passages").innerHTML=state.selected.length?state.selected.map(p=>`<article class="passage ${p.canon==="deut"?"deut":p.canon==="extra"?"extra":""}">
+    <div><div class="test">${p.canon==="deut"?"Deuterocanónico / Apócrifo según tradición":p.canon==="extra"?"Otro texto antiguo":(p.test==="OT"?"Antiguo Testamento":"Nuevo Testamento")} · ${esc(versionLabel(version))}</div><div class="ref">${esc(p.ref)}</div><div class="txt">${esc(versionText(p,version))}</div><div class="ctx">${esc(p.context)}</div></div>
+    <div><div class="themes">${p.themes.map(esc).join(" · ")}</div><div class="hero-actions"><button class="btn soft" onclick="toggleFav(${p.id})">${state.favs.has(p.id)?"★ Favorito":"☆ Guardar"}</button><button class="btn soft" onclick="noteFromPassage(${p.id})">✎ Nota</button></div></div>
+  </article>`).join(""):'<div class="note">Aún no has generado un estudio.</div>';
+}
+function application(themes){
+  let o=[];
+  if(themes.includes("perdón")||themes.includes("arrepentimiento"))o.push("<p><strong>Perdón y responsabilidad:</strong> el perdón bíblico no elimina automáticamente consecuencias ni restaura por sí solo la confianza. La reparación exige verdad y cambio sostenido.</p>");
+  if(themes.includes("reconciliación")||themes.includes("relaciones"))o.push("<p><strong>Relaciones:</strong> reconciliar y volver a confiar son procesos distintos. La Biblia enfatiza verdad, paz, paciencia, límites y responsabilidad.</p>");
+  if(themes.includes("decisiones")||themes.includes("sabiduría"))o.push("<p><strong>Decisiones:</strong> revisa motivos, busca sabiduría y distingue claramente qué depende de ti y qué no.</p>");
+  if(themes.includes("miedo")||themes.includes("ansiedad"))o.push("<p><strong>Miedo y ansiedad:</strong> la respuesta bíblica combina confianza, oración, presente y orientación hacia lo verdadero.</p>");
+  if(themes.includes("esperanza"))o.push("<p><strong>Esperanza:</strong> esperanza bíblica no significa garantía de que ocurra exactamente lo deseado; significa permanecer fiel mientras el resultado no está en tus manos.</p>");
+  return o.join("")||"<p><strong>Discernimiento:</strong> aplica primero el texto a tu propia conducta antes de usarlo para inferir decisiones futuras de otra persona.</p>";
+}
+function renderAnalysis(){
+  if(!state.selected.length){$("analysis").innerHTML="";return}
+  const q=$("question").value.trim(), themes=[...new Set(state.selected.flatMap(p=>p.themes))], tags=classify(q);
+  $("analysis").innerHTML=`<div class="analysis">
+    <div class="analysis-block"><h4>Lectura contextual</h4><div class="chip-row">${tags.map(x=>`<span class="chip">${esc(x)}</span>`).join("")}</div>${state.selected.map(p=>`<p><strong>${esc(p.ref)}:</strong> ${esc(p.context)}</p>`).join("")}</div>
+    <div class="analysis-block"><h4>Aplicación</h4>${application(themes)}${state.mode==="prayer"?`<div class="callout gold">Señor, pongo delante de ti esta situación. Dame sabiduría para actuar con verdad, humildad y amor. Ayúdame a vivir lo que estos pasajes enseñan y a aceptar con paz lo que no puedo controlar. Amén.</div>`:""}</div>
+  </div><div class="callout">Principio de interpretación: una pregunta personal no se responde con “Dios me dijo que ocurrirá X”. El texto ilumina carácter, decisiones, esperanza, responsabilidad y conducta.</div>`;
+}
+
+function toggleFav(id){
+  if(state.favs.has(id))state.favs.delete(id);else state.favs.add(id);
+  localStorage.setItem("scripturaV4Favs",JSON.stringify([...state.favs]));$("favCount").textContent=state.favs.size;renderPassages();
+}
+function noteFromPassage(id){
+  const p=PASSAGES.find(x=>x.id===id);activateView("notes");$("noteTitle").value=p.ref;$("noteBody").value=`${p.text}\n\nReflexión: `;
+}
+
+function renderBooks(){
+  enrichAuthorship();
+  enrichLanguage();
+  let genres=[...new Set(BOOKS.map(b=>b.genre))].sort();
+  $("bookGenre").innerHTML='<option value="all">Todos los géneros</option>'+genres.map(g=>`<option>${esc(g)}</option>`).join("");
+  let authors=[...new Set(BOOKS.map(b=>b.author))].sort((a,b)=>a.localeCompare(b));
+  $("bookAuthor").innerHTML='<option value="all">Todos los autores atribuidos</option>'+authors.map(a=>`<option>${esc(a)}</option>`).join("");
+  $("metricAuthors").textContent=authors.length;
+  filterBooks();
+}
+function filterBooks(){
+  let c=$("bookCanon").value,t=$("bookTest").value,g=$("bookGenre").value,a=$("bookAuthor").value,l=$("bookLanguage").value,f=norm($("bookFilter").value);
+  let list=BOOKS.filter(b=>
+    (c==="all"||b.canon===c) &&
+    (t==="all"||b.test===t) &&
+    (g==="all"||b.genre===g) &&
+    (a==="all"||b.author===a) &&
+    (l==="all"||b.langCode===l) &&
+    (!f||norm(b.name+" "+b.themes+" "+b.summary+" "+b.author+" "+b.tradition+" "+b.scholar+" "+b.originalLanguage+" "+b.langNote).includes(f))
+  );
+  $("metricBooks").textContent=list.length;
+  $("bookGrid").innerHTML=list.map(b=>`<button class="book-card ${b.canon==="deut"?"deut":b.canon==="extra"?"extra":""}" onclick="showBook(${b.id})">
+    <div class="book-top"><div><b>${esc(b.name)}</b><span>${b.canon==="deut"?"Deuterocanónico":b.canon==="extra"?"Texto antiguo":esc(b.genre)} · ${b.chapters} capítulos</span></div><span class="book-num">#${b.id}</span></div>
+    <div class="author-label">Atribuido a</div>
+    <div class="author-name">${esc(b.author)}</div>
+    <div class="book-language">${langBadge(b)}</div>
+    <span class="author-chip">✎ Autoría / tradición</span>
+  </button>`).join("");
+}
+
+function originalEntriesForBook(book){
+  return Object.entries(ORIGINAL_TEXTS).filter(([ref,d])=>ref.startsWith(book.name+" "));
+}
+function renderBookOriginalPanel(book){
+  const entries=originalEntriesForBook(book);
+  if(!entries.length){
+    return `<div class="origin-panel">
+      <div class="section-head"><div><h3 style="font-family:inherit;font-size:14px">Texto original e interlineal</h3><p>${esc(book.originalLanguage)}</p></div>${langBadge(book)}</div>
+      <p>La V8 identifica la lengua original del libro, pero todavía no contiene el texto original completo de todos sus capítulos. Cuando un pasaje original está disponible en la base local, se muestra aquí en paralelo con su traducción literal.</p>
+    </div>`;
+  }
+  const opts=entries.map(([ref])=>`<option>${esc(ref)}</option>`).join("");
+  const first=entries[0][0];
+  return `<div class="origin-panel">
+    <div class="section-head"><div><h3 style="font-family:inherit;font-size:14px">Texto original e interlineal</h3><p>Original a la izquierda · traducción literal a la derecha</p></div>${langBadge(book)}</div>
+    <div class="origin-selector">
+      <select id="bookOrigRef">${opts}</select>
+      <select id="bookOrigView"><option value="literal">Traducción textual</option><option value="words">Palabra por palabra</option><option value="semantic">Explicación semántica</option></select>
+      <button class="btn primary" onclick="renderBookOriginal('${esc(book.name)}')">Ver original</button>
+    </div>
+    <div id="bookOriginalArea">${renderInterlinear(first,"literal")}</div>
+  </div>`;
+}
+function renderInterlinear(ref,view="literal"){
+  const d=ORIGINAL_TEXTS[ref];
+  if(!d)return '<div class="note">No hay texto original local para esta referencia.</div>';
+  const words=d.words.map(w=>`<div class="word-cell"><div class="o">${esc(w[0])}</div><div class="t">${esc(w[1])}</div><div class="g">${esc(w[2])}</div></div>`).join("");
+  let lower="";
+  if(view==="words") lower=`<div class="word-table">${words}</div>`;
+  else if(view==="semantic") lower=`<div class="analysis-block"><h4>Rango semántico y gramática</h4><p>${esc(d.sense)}</p></div>`;
+  else lower=`<div class="word-table">${words}</div>`;
+  return `<div class="interlinear-shell">
+    <div class="interlinear-pane original">
+      <h4>Texto original · ${esc(d.lang)}</h4>
+      <div class="interlinear-large ${d.dir==="rtl"?"rtl":"greek"}">${esc(d.original)}</div>
+      <div class="translit"><strong>Transliteración:</strong> ${esc(d.translit)}</div>
+    </div>
+    <div class="interlinear-pane translation">
+      <h4>Traducción textual / ultraliteral</h4>
+      <div class="literal-line">${esc(d.literal)}</div>
+      <div class="callout" style="margin-top:12px">Esta columna intenta conservar el orden y la función de las palabras originales. No siempre suena natural en español; justamente sirve para ver dónde una traducción normal necesita interpretar.</div>
+    </div>
+  </div>${lower}
+  <div class="analysis" style="margin-top:12px">
+    <div class="analysis-block"><h4>Interpretación lingüística</h4><p>${esc(d.sense)}</p></div>
+    <div class="analysis-block"><h4>Transmisión / variantes</h4><p>${esc(d.variants)}</p></div>
+  </div>`;
+}
+function renderBookOriginal(bookName){
+  const ref=$("bookOrigRef").value,view=$("bookOrigView").value;
+  $("bookOriginalArea").innerHTML=renderInterlinear(ref,view);
+}
+
+function showBook(id){
+  const b=BOOKS.find(x=>x.id===id), refs=PASSAGES.filter(p=>p.book===b.name);
+  $("bookDetail").innerHTML=`<div class="detail-hero">
+    <div class="detail-card">
+      <div class="eyebrow">${b.canon==="deut"?"Deuterocanónico":b.canon==="extra"?"Texto antiguo":"Canon bíblico"}</div>
+      <h3>${esc(b.name)}</h3>
+      <div class="chip-row">
+        <span class="chip">${b.canon==="deut"?"Deuterocanónico / Apócrifo según tradición":b.canon==="extra"?"Otro texto antiguo":(b.test==="OT"?"Antiguo Testamento":"Nuevo Testamento")}</span>
+        <span class="chip">${esc(b.genre)}</span>
+        <span class="chip">${b.chapters} capítulos</span>
+      </div>
+      <p>${esc(b.summary)}</p>
+      <p><strong>Temas:</strong> ${esc(b.themes)}</p>
+      <div class="book-language">${langBadge(b)}</div>
+      <div class="origin-panel"><h4>Lengua original / tradición textual</h4><p>${esc(b.langNote)}</p></div>
+      ${refs.length?`<p><strong>Pasajes curados:</strong> ${refs.map(r=>esc(r.ref)).join(" · ")}</p>`:""}
+    </div>
+    <div class="author-panel">
+      <div class="eyebrow">Autoría y atribución</div>
+      <h4 style="font-size:18px;margin-top:8px">${esc(b.author)}</h4>
+      <div class="authorship-grid">
+        <div class="authorship-box"><div class="label">Atribución tradicional</div><b>${esc(b.author)}</b><p>${esc(b.tradition)}</p></div>
+        <div class="authorship-box"><div class="label">Perspectiva académica</div><b>Estado de la cuestión</b><p>${esc(b.scholar)}</p></div>
+      </div>
+    </div>
+  </div>
+  ${renderBookOriginalPanel(b)}
+  <div class="detail-card" style="margin-top:14px">
+    <div class="section-head"><div><h3 style="font-family:inherit;font-size:14px">Capítulos de ${esc(b.name)}</h3><p>Selecciona un capítulo para abrir su ficha.</p></div></div>
+    <div class="chapter-grid">${Array.from({length:b.chapters},(_,i)=>`<button onclick="showChapter('${esc(b.name)}',${i+1})">${i+1}</button>`).join("")}</div>
+  </div>`;
+}
+function showChapter(book,chapter){
+  const refs=PASSAGES.filter(p=>p.book===book&&p.ref.startsWith(book+" "+chapter+":"));
+  const text=refs.length?refs.map(r=>`<div class="search-result"><b>${esc(r.ref)}</b><small>${esc(r.text)}<br>${esc(r.context)}</small></div>`).join(""):`<div class="callout">Capítulo ${chapter} de ${esc(book)}. Esta versión no incluye el texto bíblico completo por traducciones/derechos. Usa esta ficha como navegador y abre el capítulo en tu Biblia preferida.</div>`;
+  $("bookDetail").innerHTML+=`<div class="detail-card" style="margin-top:14px"><h3>${esc(book)} ${chapter}</h3>${text}<div class="hero-actions"><button class="btn secondary" onclick="activateView('notes');$('noteTitle').value='${esc(book)} ${chapter}';$('noteBody').value='Observaciones del capítulo:\\n'">Crear nota del capítulo</button></div></div>`;
+}
+
+function renderCharacters(){
+  $("characterGrid").innerHTML=CHARACTERS.map(c=>`<div class="character"><h4>${esc(c[0])}</h4><div class="chip-row"><span class="chip">${esc(c[1])}</span><span class="chip">${esc(c[2])}</span></div><p style="margin-top:9px">${esc(c[3])}</p><p><strong>Relaciones:</strong> ${esc(c[4])}</p></div>`).join("");
+}
+function renderTopics(){
+  $("topicGrid").innerHTML=TOPICS.map(t=>`<div class="topic-card"><h4>${esc(t[0])}</h4><p>${esc(t[1])}</p><p style="margin-top:8px"><strong>Referencias:</strong> ${esc(t[2])}</p><div class="hero-actions"><button class="btn soft" onclick="quickTopic('${esc(t[0].toLowerCase())}')">Estudiar tema</button></div></div>`).join("");
+  $("homeTopics").innerHTML=TOPICS.slice(0,6).map(t=>`<div class="topic-card"><h4>${esc(t[0])}</h4><p>${esc(t[1])}</p><div class="hero-actions"><button class="btn soft" onclick="quickTopic('${esc(t[0].toLowerCase())}')">Abrir</button></div></div>`).join("");
+}
+function renderTimeline(){ $("timelineList").innerHTML=TIMELINE.map(x=>`<div class="timeline-item"><b>${esc(x[0])}</b><p>${esc(x[1])}</p></div>`).join("") }
+function renderMaps(){ $("mapGrid").innerHTML=MAPS.map(m=>`<div class="map-card"><h4>${esc(m[0])}</h4><p>${esc(m[1])}</p></div>`).join("") }
+
+function renderCompare(){
+  let opts=PASSAGES.map(p=>`<option value="${p.id}">${esc(p.ref)}</option>`).join("");
+  $("compareA").innerHTML=opts;$("compareB").innerHTML=opts;$("compareB").selectedIndex=Math.min(1,PASSAGES.length-1);
+}
+function compare(){
+  const a=PASSAGES.find(p=>p.id===$("compareA").value*1),b=PASSAGES.find(p=>p.id===$("compareB").value*1);
+  const va=$("compareVersionA").value,vb=$("compareVersionB").value;
+  const shared=a.themes.filter(x=>b.themes.includes(x));
+  $("compareResult").innerHTML=`<div class="compare-card"><h4>${esc(a.ref)} · ${esc(versionLabel(va))}</h4><p>${esc(versionText(a,va))}</p><p><strong>Contexto:</strong> ${esc(a.context)}</p><p><strong>Temas:</strong> ${a.themes.join(" · ")}</p></div><div class="compare-card"><h4>${esc(b.ref)} · ${esc(versionLabel(vb))}</h4><p>${esc(versionText(b,vb))}</p><p><strong>Contexto:</strong> ${esc(b.context)}</p><p><strong>Temas:</strong> ${b.themes.join(" · ")}</p></div><div class="compare-card"><h4>Síntesis comparada</h4><p>${shared.length?`Ambos textos convergen en: ${shared.join(", ")}.`:"Los textos no comparten una etiqueta temática directa, por lo que su relación depende del tema que estés estudiando."}</p></div>`;
+}
+
+function renderPlans(){
+  $("planGrid").innerHTML=PLANS.map((p,i)=>`<div class="plan-card"><h4>${esc(p[0])}</h4><p>${p[1].length} lecturas guiadas</p><div class="hero-actions"><button class="btn soft" onclick="showPlan(${i})">Ver plan</button></div></div>`).join("");
+  $("homePlans").innerHTML=PLANS.slice(0,3).map((p,i)=>`<div class="plan-card"><h4>${esc(p[0])}</h4><p>${p[1].length} lecturas</p><div class="hero-actions"><button class="btn soft" onclick="activateView('plans');showPlan(${i})">Abrir</button></div></div>`).join("");
+}
+function showPlan(i){
+  const p=PLANS[i];$("planDetail").innerHTML=`<div class="detail-card"><h3>${esc(p[0])}</h3><div class="reading-plan">${p[1].map((r,j)=>`<div class="day"><b>Día ${j+1}</b><span>${esc(r)}</span></div>`).join("")}</div></div>`;
+}
+
+function saveNote(){
+  const title=$("noteTitle").value.trim(),body=$("noteBody").value.trim();if(!title&&!body)return;
+  let a=JSON.parse(localStorage.getItem("scripturaV4Notes")||"[]");a.unshift({id:Date.now(),title:title||"Sin título",body,time:Date.now()});localStorage.setItem("scripturaV4Notes",JSON.stringify(a));$("noteTitle").value="";$("noteBody").value="";renderNotes();
+}
+function renderNotes(){
+  const a=JSON.parse(localStorage.getItem("scripturaV4Notes")||"[]");$("noteCount").textContent=a.length;
+  $("noteList").innerHTML=a.length?a.map(n=>`<div class="note-item"><b>${esc(n.title)}</b><small>${new Date(n.time).toLocaleString()}</small><p>${esc(n.body)}</p></div>`).join(""):'<div class="note">Aún no tienes notas.</div>';
+}
+function clearNotes(){localStorage.removeItem("scripturaV4Notes");renderNotes()}
+
+function searchGlobal(){
+  const s=$("searchInput").value.trim();if(!s){$("searchResults").innerHTML="";return}
+  const n=norm(s),ts=toks(s);
+  const books=BOOKS.filter(b=>norm(b.name+" "+b.genre+" "+b.themes+" "+b.summary+" "+b.author+" "+b.tradition+" "+b.scholar).includes(n)||ts.some(t=>norm(b.name+" "+b.themes+" "+b.author).includes(t))).slice(0,12);
+  const passages=PASSAGES.filter(p=>norm(p.ref+" "+p.book+" "+p.themes.join(" ")+" "+p.text).includes(n)||ts.some(t=>norm(p.ref+" "+p.book+" "+p.themes.join(" ")).includes(t))).slice(0,15);
+  const chars=CHARACTERS.filter(c=>norm(c.join(" ")).includes(n)||ts.some(t=>norm(c.join(" ")).includes(t))).slice(0,8);
+  $("searchResults").innerHTML=(books.length?`<div class="eyebrow">Libros</div>${books.map(b=>`<div class="search-result"><b>${esc(b.name)} · atribuido a ${esc(b.author)}</b><small>${esc(b.genre)} · ${esc(b.summary)}<br><strong>Lengua:</strong> ${esc(b.originalLanguage)}<br><strong>Autoría:</strong> ${esc(b.tradition)}</small></div>`).join("")}`:"")+(passages.length?`<div class="eyebrow" style="margin-top:14px">Pasajes</div>${passages.map(p=>`<div class="search-result" style="${p.canon==="deut"?"background:#fff8ec;border-color:#ead3ad":p.canon==="extra"?"background:#f7f3ff;border-color:#d8caef":""}"><b>${esc(p.ref)} · ${p.canon==="deut"?"Deuterocanónico":p.canon==="extra"?"Texto antiguo":"Canon 66"}</b><small>${esc(p.text)}<br>${esc(p.context)}</small></div>`).join("")}`:"")+(chars.length?`<div class="eyebrow" style="margin-top:14px">Personajes</div>${chars.map(c=>`<div class="search-result"><b>${esc(c[0])}</b><small>${esc(c[2])} · ${esc(c[3])}</small></div>`).join("")}`:"")+(!books.length&&!passages.length&&!chars.length?'<div class="note">No encontré coincidencias.</div>':"");
+}
+
+function saveHistory(){
+  let a=JSON.parse(localStorage.getItem("scripturaV4History")||"[]");a.unshift({time:Date.now(),q:$("question").value.trim(),mode:state.mode,refs:state.selected.map(p=>p.ref)});localStorage.setItem("scripturaV4History",JSON.stringify(a.slice(0,30)));
+}
+
+$("origAnalyzeBtn").onclick=analyzeOriginal;
+$("origRef").onchange=analyzeOriginal;
+$("origLayer").onchange=analyzeOriginal;
+$("runBtn").onclick=runStudy;$("randomBtn").onclick=randomPassage;
+
+
+document.querySelectorAll("#askCanonFilter .canon-option").forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll("#askCanonFilter .canon-option").forEach(x=>x.classList.remove("active"));
+  btn.classList.add("active");
+  state.askCanon=btn.dataset.canon;
+});
+
+$("askBtn").onclick=answerQuestion;
+$("askClearBtn").onclick=()=>{$("askInput").value="";$("answerSection").innerHTML=""};
+$("globalVersion").onchange=()=>{renderVersionPills();renderPassages()};
+
+$("bookCanon").onchange=filterBooks;$("bookTest").onchange=filterBooks;$("bookGenre").onchange=filterBooks;$("bookAuthor").onchange=filterBooks;$("bookLanguage").onchange=filterBooks;$("bookFilter").oninput=filterBooks;
+$("compareBtn").onclick=compare;$("saveNoteBtn").onclick=saveNote;$("clearNotesBtn").onclick=clearNotes;
+$("searchBtn").onclick=searchGlobal;$("searchInput").addEventListener("keydown",e=>{if(e.key==="Enter")searchGlobal()});
+
+renderModes();renderBooks();renderCharacters();renderTopics();renderTimeline();renderMaps();renderCompare();renderPlans();renderNotes();renderPassages();renderVersionPills();renderFAQs();renderOriginalRefs();
+$("favCount").textContent=state.favs.size;
+</script>
+</body>
+</html>
